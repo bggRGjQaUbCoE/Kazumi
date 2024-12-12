@@ -77,7 +77,7 @@ dependencies:
   logger: ^2.4.0
   flutter_rating_bar: ^4.0.1
   scrollview_observer: ^1.22.0
-  styled_text: ^8.1.0
+  styled_text: ^9.0.0-beta-4
   saver_gallery: ^4.0.0
   webview_windows:
     git:

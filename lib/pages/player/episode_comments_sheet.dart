@@ -70,15 +70,12 @@ class _EpisodeCommentsSheetState extends State<EpisodeCommentsSheet> {
             child: Text('空空如也'),
           );
         }
-        return SingleChildScrollView(
-            child: ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: infoController.episodeCommentsList.length,
-                itemBuilder: (context, index) {
-                  return EpisodeCommentsCard(
-                      commentItem: infoController.episodeCommentsList[index]);
-                }));
+        return ListView.builder(
+            itemCount: infoController.episodeCommentsList.length,
+            itemBuilder: (context, index) {
+              return EpisodeCommentsCard(
+                  commentItem: infoController.episodeCommentsList[index]);
+            });
       }),
     ));
   }
