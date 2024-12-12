@@ -25,7 +25,6 @@ class BangumiCardV extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    String heroTag = Utils.makeHeroTag(bangumiItem.id);
     final InfoController infoController = Modular.get<InfoController>();
     final PopularController popularController =
         Modular.get<PopularController>();

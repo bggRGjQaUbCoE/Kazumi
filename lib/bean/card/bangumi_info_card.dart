@@ -23,7 +23,6 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
   Widget build(BuildContext context) {
     TextStyle style =
         TextStyle(fontSize: Theme.of(context).textTheme.bodyMedium!.fontSize);
-    String heroTag = Utils.makeHeroTag(widget.bangumiItem.id);
     final FavoriteController favoriteController =
         Modular.get<FavoriteController>();
     isFavorite = favoriteController.isFavorite(widget.bangumiItem);
