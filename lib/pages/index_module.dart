@@ -42,9 +42,14 @@ class IndexModule extends Module {
         ),
       ),
     ]);
-    r.child("/tab", child: (_) {
-      return const IndexPage();
-    }, children: menu.routes);
+    r.child(
+      "/tab",
+      child: (_) {
+        return const IndexPage();
+      },
+      children: menu.routes,
+      transition: TransitionType.noTransition,
+    );
     r.module("/video", module: VideoModule());
     r.module("/info", module: InfoModule());
     r.module("/settings", module: SettingsModule());
