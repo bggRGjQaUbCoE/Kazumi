@@ -61,7 +61,12 @@ class _LogsPageState extends State<LogsPage> {
           ? const Center(child: Text('没有数据'))
           : SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
-              child: Text(fileContent),
+              child: Column(
+                children: [
+                  Text(fileContent),
+                  const SizedBox(height: 86),
+                ],
+              ),
             ),
       floatingActionButton: Row(
         mainAxisAlignment: MainAxisAlignment.end,

@@ -49,15 +49,12 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                   final double maxHeight = boxConstraints.maxHeight;
                   return Stack(
                     children: [
-                      Hero(
-                        tag: heroTag,
-                        child: NetworkImgLayer(
-                          src: widget.bangumiItem.images['large'] ?? '',
-                          width: maxWidth,
-                          height: maxHeight,
-                          fadeInDuration: const Duration(milliseconds: 0),
-                          fadeOutDuration: const Duration(milliseconds: 0),
-                        ),
+                      NetworkImgLayer(
+                        src: widget.bangumiItem.images['large'] ?? '',
+                        width: maxWidth,
+                        height: maxHeight,
+                        fadeInDuration: const Duration(milliseconds: 0),
+                        fadeOutDuration: const Duration(milliseconds: 0),
                       ),
                       Positioned(
                         right: 5,

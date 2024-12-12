@@ -180,6 +180,9 @@ class _InfoPageState extends State<InfoPage>
                             }
                           }
                         }
+                        cardList.add(
+                          const SizedBox(height: 86),
+                        );
                         return ListView(children: cardList);
                       }),
                     ),

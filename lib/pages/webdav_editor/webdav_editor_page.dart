@@ -67,8 +67,10 @@ class _WebDavEditorPageState extends State<WebDavEditorPage> {
         child: const Icon(Icons.save),
         onPressed: () async {
           setting.put(SettingBoxKey.webDavURL, webDavURLController.text);
-          setting.put(SettingBoxKey.webDavUsername, webDavUsernameController.text);
-          setting.put(SettingBoxKey.webDavPassword, webDavPasswordController.text);
+          setting.put(
+              SettingBoxKey.webDavUsername, webDavUsernameController.text);
+          setting.put(
+              SettingBoxKey.webDavPassword, webDavPasswordController.text);
           var webDav = WebDav();
           try {
             await webDav.init();

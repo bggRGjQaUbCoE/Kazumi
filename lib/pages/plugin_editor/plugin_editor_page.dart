@@ -151,6 +151,7 @@ class _PluginEditorPageState extends State<PluginEditorPage> {
                 ),
               ],
             ),
+            SizedBox(height: 86 + MediaQuery.paddingOf(context).bottom),
           ],
         ),
       ),

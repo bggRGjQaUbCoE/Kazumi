@@ -67,13 +67,10 @@ class BangumiCardV extends StatelessWidget {
                     final double maxHeight = boxConstraints.maxHeight;
                     return Stack(
                       children: [
-                        Hero(
-                          tag: heroTag,
-                          child: NetworkImgLayer(
-                            src: bangumiItem.images['large'] ?? '',
-                            width: maxWidth,
-                            height: maxHeight,
-                          ),
+                        NetworkImgLayer(
+                          src: bangumiItem.images['large'] ?? '',
+                          width: maxWidth,
+                          height: maxHeight,
                         ),
                       ],
                     );

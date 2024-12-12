@@ -267,12 +267,14 @@ class _PopularPageState extends State<PopularPage>
                           ),
                         ),
                         SliverPadding(
-                            padding: const EdgeInsets.fromLTRB(
-                                StyleString.cardSpace,
-                                0,
-                                StyleString.cardSpace,
-                                0),
-                            sliver: Observer(builder: (context) {
+                          padding: const EdgeInsets.fromLTRB(
+                            StyleString.cardSpace,
+                            0,
+                            StyleString.cardSpace,
+                            86,
+                          ),
+                          sliver: Observer(
+                            builder: (context) {
                               if (popularController.bangumiList.isEmpty &&
                                   timeout) {
                                 return HttpError(
@@ -299,23 +301,26 @@ class _PopularPageState extends State<PopularPage>
                                   !timeout) {
                                 return SliverToBoxAdapter(
                                   child: SizedBox(
-                                      height:
-                                          (MediaQuery.of(context).size.height /
-                                              2),
-                                      child: const Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          CircularProgressIndicator(),
-                                        ],
-                                      )),
+                                    height:
+                                        (MediaQuery.of(context).size.height /
+                                            2),
+                                    child: const Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        CircularProgressIndicator(),
+                                      ],
+                                    ),
+                                  ),
                                 );
                               }
                               return contentGrid(
                                   popularController.bangumiList, orientation);
-                            })),
+                            },
+                          ),
+                        ),
                       ],
                     ),
                   ),

@@ -116,16 +116,18 @@ class _HistoryPageState extends State<HistoryPage>
     return CustomScrollView(
       slivers: [
         SliverPadding(
-          padding: const EdgeInsets.only(
-              left: StyleString.cardSpace + 2,
-              right: StyleString.cardSpace + 2,
-              bottom: StyleString.safeSpace * 2),
+          padding: EdgeInsets.only(
+            left: StyleString.cardSpace + 2,
+            right: StyleString.cardSpace + 2,
+            bottom: 86 + MediaQuery.paddingOf(context).bottom,
+          ),
           sliver: SliverGrid(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisSpacing: StyleString.cardSpace - 2,
-                crossAxisSpacing: StyleString.cardSpace - 2,
-                crossAxisCount: crossCount,
-                mainAxisExtent: 150),
+              mainAxisSpacing: StyleString.cardSpace - 2,
+              crossAxisSpacing: StyleString.cardSpace - 2,
+              crossAxisCount: crossCount,
+              mainAxisExtent: 150,
+            ),
             delegate: SliverChildBuilderDelegate(
               (BuildContext context, int index) {
                 return historyController.histories.isNotEmpty
