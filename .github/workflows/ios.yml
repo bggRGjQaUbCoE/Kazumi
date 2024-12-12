@@ -1,0 +1,38 @@
+name: Build for iOS
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        required: false
+        default: 'main'
+
+jobs:
+  build-macos-app:
+    name: Release IOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.branch }}
+
+      - name: Setup flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Set up xcode
+        uses: BoundfoxStudios/action-xcode-select@v1
+
+      - name: Build iOS
+        run: |
+          flutter build ios --release --no-codesign 
+          ln -sf ./build/ios/iphoneos Payload
+          zip -r9 ios-release-no-sign.ipa Payload/runner.app
+
+      - name: Upload ios release
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-release
+          path: ios-release-no-sign.ipa
