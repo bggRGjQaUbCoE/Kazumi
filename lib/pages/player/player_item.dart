@@ -792,11 +792,8 @@ class _PlayerItemState extends State<PlayerItem>
 
     return PopScope(
       // key: _key,
-      canPop: false,
+      canPop: true,
       onPopInvokedWithResult: (bool didPop, Object? result) {
-        if (didPop) {
-          return;
-        }
         onBackPressed(context);
       },
       child: Observer(builder: (context) {
