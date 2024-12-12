@@ -122,103 +122,96 @@ class _AboutPageState extends State<AboutPage> {
       child: Scaffold(
         appBar: const SysAppBar(title: Text('关于')),
         // backgroundColor: Colors.transparent,
-        body: Column(
-          children: [
-            ListTile(
-              title: const Text('开源许可证'),
-              subtitle: Text('查看所有开源许可证',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-              onTap: () {
-                Modular.to.pushNamed('/settings/about/license');
-              },
-            ),
-            ListTile(
-              onTap: () {
-                launchUrl(Uri.parse(Api.sourceUrl),
-                    mode: LaunchMode.externalApplication);
-              },
-              dense: false,
-              title: const Text('项目主页'),
-              trailing: Text('Github',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
-            ListTile(
-              onTap: () {
-                launchUrl(Uri.parse(Api.iconUrl),
-                    mode: LaunchMode.externalApplication);
-              },
-              dense: false,
-              title: const Text('图标创作'),
-              trailing: Text('Pixiv',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
-            ListTile(
-              onTap: () {
-                launchUrl(Uri.parse(Api.bangumiIndex),
-                    mode: LaunchMode.externalApplication);
-              },
-              dense: false,
-              title: const Text('番剧索引'),
-              trailing: Text('Bangumi',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
-            ListTile(
-              onTap: () {
-                launchUrl(Uri.parse(Api.dandanIndex),
-                    mode: LaunchMode.externalApplication);
-              },
-              dense: false,
-              title: const Text('弹幕来源'),
-              trailing: Text('DanDanPlay',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
-            ListTile(
-              onTap: () {
-                Modular.to.pushNamed('/settings/about/logs');
-              },
-              dense: false,
-              title: const Text('错误日志'),
-            ),
-            ListTile(
-              onTap: () {
-                _showCacheDialog();
-              },
-              dense: false,
-              title: const Text('清除缓存'),
-              trailing: _cacheSizeMB == -1
-                  ? const Text('统计中...')
-                  : Text('${_cacheSizeMB.toStringAsFixed(2)}MB',
-                      style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.outline)),
-            ),
-            ListTile(
-              onTap: () {
-                myController.checkUpdata();
-              },
-              dense: false,
-              title: const Text('检查更新'),
-              trailing: Text('当前版本 ${Api.version}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .labelMedium!
-                      .copyWith(color: Theme.of(context).colorScheme.outline)),
-            ),
-          ],
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              ListTile(
+                title: const Text('开源许可证'),
+                subtitle: Text('查看所有开源许可证',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.outline)),
+                onTap: () {
+                  Modular.to.pushNamed('/settings/about/license');
+                },
+              ),
+              ListTile(
+                onTap: () {
+                  launchUrl(Uri.parse(Api.sourceUrl),
+                      mode: LaunchMode.externalApplication);
+                },
+                dense: false,
+                title: const Text('项目主页'),
+                trailing: Text('Github',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.outline)),
+              ),
+              ListTile(
+                onTap: () {
+                  launchUrl(Uri.parse(Api.iconUrl),
+                      mode: LaunchMode.externalApplication);
+                },
+                dense: false,
+                title: const Text('图标创作'),
+                trailing: Text('Pixiv',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.outline)),
+              ),
+              ListTile(
+                onTap: () {
+                  launchUrl(Uri.parse(Api.bangumiIndex),
+                      mode: LaunchMode.externalApplication);
+                },
+                dense: false,
+                title: const Text('番剧索引'),
+                trailing: Text('Bangumi',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.outline)),
+              ),
+              ListTile(
+                onTap: () {
+                  launchUrl(Uri.parse(Api.dandanIndex),
+                      mode: LaunchMode.externalApplication);
+                },
+                dense: false,
+                title: const Text('弹幕来源'),
+                trailing: Text('DanDanPlay',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.outline)),
+              ),
+              ListTile(
+                onTap: () {
+                  Modular.to.pushNamed('/settings/about/logs');
+                },
+                dense: false,
+                title: const Text('错误日志'),
+              ),
+              ListTile(
+                onTap: () {
+                  _showCacheDialog();
+                },
+                dense: false,
+                title: const Text('清除缓存'),
+                trailing: _cacheSizeMB == -1
+                    ? const Text('统计中...')
+                    : Text('${_cacheSizeMB.toStringAsFixed(2)}MB',
+                        style: Theme.of(context)
+                            .textTheme
+                            .labelMedium!
+                            .copyWith(
+                                color: Theme.of(context).colorScheme.outline)),
+              ),
+              ListTile(
+                onTap: () {
+                  myController.checkUpdata();
+                },
+                dense: false,
+                title: const Text('检查更新'),
+                trailing: Text('当前版本 ${Api.version}',
+                    style: Theme.of(context).textTheme.labelMedium!.copyWith(
+                        color: Theme.of(context).colorScheme.outline)),
+              ),
+            ],
+          ),
         ),
       ),
     );
