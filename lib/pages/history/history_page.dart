@@ -150,7 +150,7 @@ class _HistoryPageState extends State<HistoryPage>
   //     itemBuilder: (BuildContext context, int index) {
   //       return histories.isNotEmpty
   //           ? BangumiHistoryCardV(historyItem: histories[index])
-  //           : Container();
+  //           : const SizedBox.shrink();
   //     },
   //   );
   // }

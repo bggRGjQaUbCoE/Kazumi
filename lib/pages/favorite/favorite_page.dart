@@ -98,25 +98,30 @@ class _FavoritePageState extends State<FavoritePage> {
           if (bangumiList.isNotEmpty) {
             return Stack(
               children: [
-                BangumiCardV(bangumiItem: bangumiList[index], canTap: !showDelete,),
+                BangumiCardV(
+                  bangumiItem: bangumiList[index],
+                  canTap: !showDelete,
+                ),
                 Positioned(
                   right: 5,
                   bottom: 5,
-                  child: showDelete ? IconButton.filledTonal(
-                    icon: const Icon(Icons.favorite),
-                    onPressed: () async {
-                      await favoriteController
-                          .deleteFavorite(bangumiList[index]);
-                      if (mounted) {
-                        setState(() {});
-                      }
-                    },
-                  ) : Container(),
+                  child: showDelete
+                      ? IconButton.filledTonal(
+                          icon: const Icon(Icons.favorite),
+                          onPressed: () async {
+                            await favoriteController
+                                .deleteFavorite(bangumiList[index]);
+                            if (mounted) {
+                              setState(() {});
+                            }
+                          },
+                        )
+                      : const SizedBox.shrink(),
                 ),
               ],
             );
           } else {
-            return Container(); // 返回一个空容器以避免返回 null
+            return const SizedBox.shrink(); // 返回一个空容器以避免返回 null
           }
         },
         childCount: bangumiList.isNotEmpty ? bangumiList.length : 10,

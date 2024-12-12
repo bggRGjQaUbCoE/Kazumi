@@ -199,7 +199,7 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
                     title: const Text('屏幕帧率'),
                     // trailing: const Icon(Icons.navigate_next),
                   )
-                : Container(),
+                : const SizedBox.shrink(),
             ListTile(
               onTap: () {
                 SmartDialog.show(

@@ -177,7 +177,7 @@ class _PopularPageState extends State<PopularPage>
                       child: GestureDetector(
                         behavior: HitTestBehavior.translucent,
                         onPanStart: (_) => windowManager.startDragging(),
-                        child: Container(),
+                        child: const SizedBox.shrink(),
                       ),
                     ),
                     Padding(
@@ -263,7 +263,7 @@ class _PopularPageState extends State<PopularPage>
                                 top: 0, bottom: 10, left: 0),
                             child: searchLoading
                                 ? const LinearProgressIndicator()
-                                : Container(),
+                                : const SizedBox.shrink(),
                           ),
                         ),
                         SliverPadding(

@@ -38,7 +38,8 @@ class EpisodeCommentsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          commentsWithStyledText(Utils.richTextParser(commentItem.comment.comment), context),
+          commentsWithStyledText(
+              Utils.richTextParser(commentItem.comment.comment), context),
           (commentItem.replies.isNotEmpty)
               ? ListView.builder(
                   physics: const NeverScrollableScrollPhysics(),
@@ -50,7 +51,10 @@ class EpisodeCommentsCard extends StatelessWidget {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Divider(color: Theme.of(context).dividerColor.withAlpha(60)),
+                            Divider(
+                                color: Theme.of(context)
+                                    .dividerColor
+                                    .withAlpha(60)),
                             Row(
                               children: [
                                 CircleAvatar(
@@ -70,11 +74,14 @@ class EpisodeCommentsCard extends StatelessWidget {
                               ],
                             ),
                             const SizedBox(height: 8),
-                            commentsWithStyledText(Utils.richTextParser(commentItem.replies[index].comment), context),
+                            commentsWithStyledText(
+                                Utils.richTextParser(
+                                    commentItem.replies[index].comment),
+                                context),
                           ]),
                     );
                   })
-              : Container()
+              : const SizedBox.shrink()
         ]),
       ),
     );
@@ -91,11 +98,9 @@ class EpisodeCommentsCard extends StatelessWidget {
       'q': StyledTextTag(
         style: TextStyle(color: Theme.of(context).colorScheme.outline),
       ),
-      'format_quote': StyledTextIconTag(
-        Icons.format_quote,
-        color: Theme.of(context).colorScheme.outline,
-        alignment: PlaceholderAlignment.top
-      ),
+      'format_quote': StyledTextIconTag(Icons.format_quote,
+          color: Theme.of(context).colorScheme.outline,
+          alignment: PlaceholderAlignment.top),
       's': StyledTextTag(
         style: const TextStyle(decoration: TextDecoration.lineThrough),
       ),
@@ -117,40 +122,44 @@ class EpisodeCommentsCard extends StatelessWidget {
         },
       ),
       'link': StyledTextActionTag(
-            (_, attrs) {
-              _copyLink(attrs);
-            },
+        (_, attrs) {
+          _copyLink(attrs);
+        },
         style: const TextStyle(color: Colors.blue),
       ),
       'color': StyledTextCustomTag(
-        baseStyle: const TextStyle(fontStyle: FontStyle.normal),
-        parse: (baseStyle, attributes) {
-          if (attributes.containsKey('color')) {
-            final String color = attributes['color']!;
-            switch (color) {
-              case 'red': return baseStyle?.copyWith(color: Colors.red);
-              case 'blue': return baseStyle?.copyWith(color: Colors.blue);
-              case 'orange': return baseStyle?.copyWith(color: Colors.orange);
-              case 'green': return baseStyle?.copyWith(color: Colors.green);
-              case 'grey': return baseStyle?.copyWith(color: Colors.grey);
-              default: return baseStyle;
+          baseStyle: const TextStyle(fontStyle: FontStyle.normal),
+          parse: (baseStyle, attributes) {
+            if (attributes.containsKey('color')) {
+              final String color = attributes['color']!;
+              switch (color) {
+                case 'red':
+                  return baseStyle?.copyWith(color: Colors.red);
+                case 'blue':
+                  return baseStyle?.copyWith(color: Colors.blue);
+                case 'orange':
+                  return baseStyle?.copyWith(color: Colors.orange);
+                case 'green':
+                  return baseStyle?.copyWith(color: Colors.green);
+                case 'grey':
+                  return baseStyle?.copyWith(color: Colors.grey);
+                default:
+                  return baseStyle;
+              }
+            } else {
+              return baseStyle;
             }
-          } else {
-            return baseStyle;
-          }
-        }
-      ),
+          }),
       'size': StyledTextCustomTag(
-        baseStyle: const TextStyle(fontStyle: FontStyle.normal),
-        parse: (baseStyle, attributes) {
-          if (attributes.containsKey('size')) {
-            double size = double.tryParse(attributes['size']!) ?? 14;
-            return baseStyle?.copyWith(fontSize: size);
-          } else {
-            return baseStyle;
-          }
-        }
-      ),
+          baseStyle: const TextStyle(fontStyle: FontStyle.normal),
+          parse: (baseStyle, attributes) {
+            if (attributes.containsKey('size')) {
+              double size = double.tryParse(attributes['size']!) ?? 14;
+              return baseStyle?.copyWith(fontSize: size);
+            } else {
+              return baseStyle;
+            }
+          }),
     });
   }
 

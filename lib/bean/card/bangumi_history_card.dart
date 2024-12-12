@@ -183,7 +183,7 @@ class _BangumiHistoryCardVState extends State<BangumiHistoryCardV> {
                                   .deleteHistory(widget.historyItem);
                             },
                           )
-                        : Container(),
+                        : const SizedBox.shrink(),
                   ],
                 ),
               ],

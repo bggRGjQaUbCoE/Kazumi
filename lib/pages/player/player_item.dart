@@ -687,12 +687,16 @@ class _PlayerItemState extends State<PlayerItem>
     SmartDialog.showToast('截图中...', displayType: SmartToastType.onlyRefresh);
 
     try {
-      Uint8List? screenshot = await playerController.mediaPlayer.screenshot(format: 'image/png');
-      final result = await SaverGallery.saveImage(screenshot!, fileName: DateTime.timestamp().toString(), skipIfExists: false);
+      Uint8List? screenshot =
+          await playerController.mediaPlayer.screenshot(format: 'image/png');
+      final result = await SaverGallery.saveImage(screenshot!,
+          fileName: DateTime.timestamp().toString(), skipIfExists: false);
       if (result.isSuccess) {
-        SmartDialog.showToast('截图保存到相簿成功', displayType: SmartToastType.onlyRefresh);
+        SmartDialog.showToast('截图保存到相簿成功',
+            displayType: SmartToastType.onlyRefresh);
       } else {
-        SmartDialog.showToast('截图保存失败：${result.errorMessage}', displayType: SmartToastType.onlyRefresh);
+        SmartDialog.showToast('截图保存失败：${result.errorMessage}',
+            displayType: SmartToastType.onlyRefresh);
       }
     } catch (e) {
       SmartDialog.showToast('截图失败：$e', displayType: SmartToastType.onlyRefresh);
@@ -969,7 +973,7 @@ class _PlayerItemState extends State<PlayerItem>
                               child: CircularProgressIndicator(),
                             ),
                           )
-                        : Container(),
+                        : const SizedBox.shrink(),
                     GestureDetector(
                       onTap: () {
                         _handleTap();
@@ -1074,7 +1078,7 @@ class _PlayerItemState extends State<PlayerItem>
                         right: 15,
                         bottom: 15,
                         child: (Utils.isDesktop() || lockPanel)
-                            ? Container()
+                            ? const SizedBox.shrink()
                             : GestureDetector(onHorizontalDragUpdate:
                                 (DragUpdateDetails details) {
                                 setState(() {
@@ -1195,7 +1199,7 @@ class _PlayerItemState extends State<PlayerItem>
                                   ),
                                 ],
                               )
-                            : Container()),
+                            : const SizedBox.shrink()),
                     // 顶部播放速度条
                     Positioned(
                         top: 25,
@@ -1225,7 +1229,7 @@ class _PlayerItemState extends State<PlayerItem>
                                   ),
                                 ],
                               )
-                            : Container()),
+                            : const SizedBox.shrink()),
                     // 亮度条
                     Positioned(
                         top: 25,
@@ -1254,7 +1258,7 @@ class _PlayerItemState extends State<PlayerItem>
                                       )),
                                 ],
                               )
-                            : Container()),
+                            : const SizedBox.shrink()),
                     // 音量条
                     Positioned(
                         top: 25,
@@ -1283,7 +1287,7 @@ class _PlayerItemState extends State<PlayerItem>
                                       )),
                                 ],
                               )
-                            : Container()),
+                            : const SizedBox.shrink()),
                     // 弹幕面板
                     Positioned(
                       top: 0,
@@ -1316,7 +1320,7 @@ class _PlayerItemState extends State<PlayerItem>
 
                     // 右侧锁定按钮
                     (Utils.isDesktop() || !videoPageController.isFullscreen)
-                        ? Container()
+                        ? const SizedBox.shrink()
                         : Positioned(
                             right: 0,
                             top: 0,
@@ -1326,7 +1330,7 @@ class _PlayerItemState extends State<PlayerItem>
                               child: Column(children: [
                                 const Spacer(),
                                 (lockPanel)
-                                    ? Container()
+                                    ? const SizedBox.shrink()
                                     : IconButton(
                                         icon: const Icon(
                                           Icons.photo_camera_outlined,
@@ -1383,7 +1387,7 @@ class _PlayerItemState extends State<PlayerItem>
                                               .titleMedium!
                                               .fontSize),
                                     )
-                                  : Container(),
+                                  : const SizedBox.shrink(),
                               // 拖动条
                               const Expanded(
                                 child: dtb.DragToMoveArea(
@@ -1398,10 +1402,9 @@ class _PlayerItemState extends State<PlayerItem>
                                             ? 'COVER'
                                             : 'FILL',
                                     style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold
-                                    )),
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold)),
                                 itemBuilder: (context) {
                                   return const [
                                     PopupMenuItem(
@@ -1443,10 +1446,9 @@ class _PlayerItemState extends State<PlayerItem>
                                 child: Text(
                                   '${playerController.playerSpeed}X',
                                   style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold
-                                  ),
+                                      color: Colors.white,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ),
                               IconButton(
@@ -1662,7 +1664,7 @@ class _PlayerItemState extends State<PlayerItem>
                                                 .currentRoad);
                                       },
                                     )
-                                  : Container(),
+                                  : const SizedBox.shrink(),
                               Expanded(
                                 child: ProgressBar(
                                   timeLabelLocation: TimeLabelLocation.none,
@@ -1681,7 +1683,7 @@ class _PlayerItemState extends State<PlayerItem>
                               ),
                               ((Utils.isCompact()) &&
                                       !videoPageController.isFullscreen)
-                                  ? Container()
+                                  ? const SizedBox.shrink()
                                   : Container(
                                       padding:
                                           const EdgeInsets.only(left: 10.0),
@@ -1709,7 +1711,7 @@ class _PlayerItemState extends State<PlayerItem>
                                         showShootDanmakuSheet();
                                       },
                                     )
-                                  : Container(),
+                                  : const SizedBox.shrink(),
                               IconButton(
                                 color: Colors.white,
                                 icon: Icon(playerController.danmakuOn
@@ -1722,7 +1724,7 @@ class _PlayerItemState extends State<PlayerItem>
                               (!videoPageController.isFullscreen &&
                                       !Utils.isTablet() &&
                                       !Utils.isDesktop())
-                                  ? Container()
+                                  ? const SizedBox.shrink()
                                   : IconButton(
                                       color: Colors.white,
                                       icon: Icon(videoPageController.showTabBody
@@ -1738,7 +1740,7 @@ class _PlayerItemState extends State<PlayerItem>
                                       videoPageController.isFullscreen &&
                                       MediaQuery.of(context).size.height <
                                           MediaQuery.of(context).size.width)
-                                  ? Container()
+                                  ? const SizedBox.shrink()
                                   : IconButton(
                                       color: Colors.white,
                                       icon: Icon(
@@ -1767,41 +1769,39 @@ class _PlayerItemState extends State<PlayerItem>
   }
 
   Widget get playerSurface {
-    return Observer(
-      builder: (context) {
-        return Video(
-          controller: playerController.videoController,
-          controls: NoVideoControls,
-          fit: playerController.aspectRatioType == 1
-              ? BoxFit.contain
-              : playerController.aspectRatioType == 2
-                  ? BoxFit.cover
-                  : BoxFit.fill,
-          subtitleViewConfiguration: SubtitleViewConfiguration(
-            style: TextStyle(
-              color: Colors.pink,
-              fontSize: 48.0,
-              background: Paint()..color = Colors.transparent,
-              decoration: TextDecoration.none,
-              fontWeight: FontWeight.bold,
-              shadows: const [
-                Shadow(
-                  offset: Offset(1.0, 1.0),
-                  blurRadius: 3.0,
-                  color: Color.fromARGB(255, 255, 255, 255),
-                ),
-                Shadow(
-                  offset: Offset(-1.0, -1.0),
-                  blurRadius: 3.0,
-                  color: Color.fromARGB(125, 255, 255, 255),
-                ),
-              ],
-            ),
-            textAlign: TextAlign.center,
-            padding: const EdgeInsets.all(24.0),
+    return Observer(builder: (context) {
+      return Video(
+        controller: playerController.videoController,
+        controls: NoVideoControls,
+        fit: playerController.aspectRatioType == 1
+            ? BoxFit.contain
+            : playerController.aspectRatioType == 2
+                ? BoxFit.cover
+                : BoxFit.fill,
+        subtitleViewConfiguration: SubtitleViewConfiguration(
+          style: TextStyle(
+            color: Colors.pink,
+            fontSize: 48.0,
+            background: Paint()..color = Colors.transparent,
+            decoration: TextDecoration.none,
+            fontWeight: FontWeight.bold,
+            shadows: const [
+              Shadow(
+                offset: Offset(1.0, 1.0),
+                blurRadius: 3.0,
+                color: Color.fromARGB(255, 255, 255, 255),
+              ),
+              Shadow(
+                offset: Offset(-1.0, -1.0),
+                blurRadius: 3.0,
+                color: Color.fromARGB(125, 255, 255, 255),
+              ),
+            ],
           ),
-        );
-      }
-    );
+          textAlign: TextAlign.center,
+          padding: const EdgeInsets.all(24.0),
+        ),
+      );
+    });
   }
 }
