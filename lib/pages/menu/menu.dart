@@ -70,12 +70,12 @@ class _BottomMenu extends State<BottomMenu> {
                       ),
                       NavigationDestination(
                         selectedIcon: Icon(Icons.favorite),
-                        icon: Icon(Icons.favorite_outlined),
+                        icon: Icon(Icons.favorite_border),
                         label: '追番',
                       ),
                       NavigationDestination(
                         selectedIcon: Icon(Icons.settings),
-                        icon: Icon(Icons.settings),
+                        icon: Icon(Icons.settings_outlined),
                         label: '我的',
                       ),
                     ],
