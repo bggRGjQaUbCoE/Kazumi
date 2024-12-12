@@ -33,21 +33,18 @@ class IndexModule extends Module {
 
   @override
   void routes(r) {
-    r.child("/",
-        child: (_) => const InitPage(),
-        children: [
-          ChildRoute(
-            "/error",
-            child: (_) => Scaffold(
-              appBar: AppBar (title: const Text("Kazumi")),
-              body: const Center(child: Text("初始化失败")),
-            ),
-          ),
-        ],
-        transition: TransitionType.noTransition);
+    r.child("/", child: (_) => const InitPage(), children: [
+      ChildRoute(
+        "/error",
+        child: (_) => Scaffold(
+          appBar: AppBar(title: const Text("Kazumi")),
+          body: const Center(child: Text("初始化失败")),
+        ),
+      ),
+    ]);
     r.child("/tab", child: (_) {
       return const IndexPage();
-    }, children: menu.routes, transition: TransitionType.noTransition);
+    }, children: menu.routes);
     r.module("/video", module: VideoModule());
     r.module("/info", module: InfoModule());
     r.module("/settings", module: SettingsModule());

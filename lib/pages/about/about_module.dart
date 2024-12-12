@@ -6,9 +6,7 @@ import 'package:kazumi/pages/logs/logs_page.dart';
 
 class AboutModule extends Module {
   @override
-  void binds(i) {
-    
-  }
+  void binds(i) {}
 
   @override
   void routes(r) {
@@ -19,7 +17,6 @@ class AboutModule extends Module {
               applicationName: 'Kazumi',
               applicationVersion: Api.version,
               applicationLegalese: '开源许可证',
-            ),
-        transition: TransitionType.noTransition);
+            ));
   }
 }
