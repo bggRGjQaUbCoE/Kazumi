@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/bean/appbar/sys_app_bar.dart';
 import 'package:kazumi/pages/info/info_controller.dart';
+import 'package:kazumi/pages/player/episode_comments_sheet.dart';
 import 'package:kazumi/pages/player/player_controller.dart';
 import 'package:kazumi/pages/video/video_controller.dart';
 import 'package:kazumi/pages/webview/webview_item.dart';
@@ -42,6 +43,9 @@ class _VideoPageState extends State<VideoPage>
 
   // 当前播放列表
   late int currentRoad;
+
+  final _key = GlobalKey<ScaffoldState>();
+  PersistentBottomSheetController? _bottomSheetController;
 
   @override
   void initState() {
@@ -141,6 +145,7 @@ class _VideoPageState extends State<VideoPage>
       }
       return Observer(builder: (context) {
         return Scaffold(
+          key: _key,
           appBar: ((videoPageController.currentPlugin.useNativePlayer ||
                   videoPageController.isFullscreen)
               ? null
@@ -425,7 +430,75 @@ class _VideoPageState extends State<VideoPage>
               ? const SizedBox.shrink()
               : PlayerItem(
                   openMenu: openTabBodyAnimated,
-                  locateEpisode: menuJumpToCurrentEpisode),
+                  locateEpisode: menuJumpToCurrentEpisode,
+                  handleFullscreen: () {
+                    if (_bottomSheetController != null) {
+                      _bottomSheetController?.close();
+                      _bottomSheetController = null;
+                    }
+                  },
+                  showComment: () {
+                    // bool needRestart = playerController.playing;
+                    // playerController.pause();
+                    dynamic episodeNum = Utils.extractEpisodeNumber(
+                        videoPageController
+                                .roadList[videoPageController.currentRoad]
+                                .identifier[
+                            videoPageController.currentEpisode - 1]);
+                    if (episodeNum == 0 ||
+                        episodeNum >
+                            videoPageController
+                                .roadList[videoPageController.currentRoad]
+                                .identifier
+                                .length) {
+                      episodeNum = videoPageController.currentEpisode;
+                    }
+                    _bottomSheetController = _key.currentState?.showBottomSheet(
+                      (context) {
+                        return EpisodeCommentsSheet(
+                          episode: episodeNum,
+                        );
+                        // return DraggableScrollableSheet(
+                        //   expand: false,
+                        //   snap: true,
+                        //   minChildSize: 0,
+                        //   maxChildSize: 1,
+                        //   initialChildSize: 1,
+                        //   snapSizes: const [1],
+                        //   builder: (context, scrollController) {
+                        //     return EpisodeCommentsSheet(
+                        //       episode: episodeNum,
+                        //       scrollController: scrollController,
+                        //     );
+                        //   },
+                        // );
+                      },
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                      enableDrag: true,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height >
+                                  MediaQuery.of(context).size.width
+                              ? MediaQuery.of(context).size.height -
+                                  MediaQuery.of(context).size.width * 9 / 16 -
+                                  MediaQuery.paddingOf(context).top
+                              : MediaQuery.of(context).size.height,
+                          maxWidth: MediaQuery.of(context).size.width >
+                                  MediaQuery.of(context).size.height
+                              ? MediaQuery.of(context).size.width * 9 / 16
+                              : MediaQuery.of(context).size.width),
+                      clipBehavior: Clip.antiAlias,
+                    );
+                    //.whenComplete(() {
+                    // if (needRestart) {
+                    //   playerController.play();
+                    // }
+                    // _focusNode.requestFocus();
+                    // });
+                  }),
         ),
 
         /// workaround for webview_windows

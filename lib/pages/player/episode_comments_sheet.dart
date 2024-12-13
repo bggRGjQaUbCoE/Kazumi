@@ -7,9 +7,14 @@ import 'package:kazumi/pages/info/info_controller.dart';
 import 'package:kazumi/bean/card/episode_comments_card.dart';
 
 class EpisodeCommentsSheet extends StatefulWidget {
-  const EpisodeCommentsSheet({super.key, required this.episode});
+  const EpisodeCommentsSheet({
+    super.key,
+    required this.episode,
+    this.scrollController,
+  });
 
   final int episode;
+  final ScrollController? scrollController;
 
   @override
   State<EpisodeCommentsSheet> createState() => _EpisodeCommentsSheetState();
@@ -71,11 +76,14 @@ class _EpisodeCommentsSheetState extends State<EpisodeCommentsSheet> {
           );
         }
         return ListView.builder(
-            itemCount: infoController.episodeCommentsList.length,
-            itemBuilder: (context, index) {
-              return EpisodeCommentsCard(
-                  commentItem: infoController.episodeCommentsList[index]);
-            });
+          controller: widget.scrollController,
+          itemCount: infoController.episodeCommentsList.length,
+          itemBuilder: (context, index) {
+            return EpisodeCommentsCard(
+              commentItem: infoController.episodeCommentsList[index],
+            );
+          },
+        );
       }),
     ));
   }

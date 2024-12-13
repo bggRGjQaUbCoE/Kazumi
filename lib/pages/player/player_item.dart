@@ -30,15 +30,21 @@ import 'package:kazumi/modules/danmaku/danmaku_episode_response.dart';
 import 'package:kazumi/bean/appbar/drag_to_move_bar.dart' as dtb;
 import 'package:kazumi/pages/settings/danmaku/danmaku_settings_window.dart';
 import 'package:kazumi/utils/constants.dart';
-import 'package:kazumi/pages/player/episode_comments_sheet.dart';
 import 'package:saver_gallery/saver_gallery.dart';
 
 class PlayerItem extends StatefulWidget {
-  const PlayerItem(
-      {super.key, required this.openMenu, required this.locateEpisode});
+  const PlayerItem({
+    super.key,
+    required this.openMenu,
+    required this.locateEpisode,
+    required this.showComment,
+    required this.handleFullscreen,
+  });
 
   final VoidCallback openMenu;
   final VoidCallback locateEpisode;
+  final VoidCallback showComment;
+  final VoidCallback handleFullscreen;
 
   @override
   State<PlayerItem> createState() => _PlayerItemState();
@@ -374,6 +380,7 @@ class _PlayerItemState extends State<PlayerItem>
   }
 
   void _handleFullscreen() {
+    widget.handleFullscreen();
     if (videoPageController.isFullscreen) {
       try {
         danmakuController.onClear();
@@ -1451,60 +1458,7 @@ class _PlayerItemState extends State<PlayerItem>
                               IconButton(
                                 color: Colors.white,
                                 icon: const Icon(Icons.comment),
-                                onPressed: () {
-                                  bool needRestart = playerController.playing;
-                                  playerController.pause();
-                                  episodeNum = Utils.extractEpisodeNumber(
-                                      videoPageController
-                                              .roadList[videoPageController
-                                                  .currentRoad]
-                                              .identifier[
-                                          videoPageController.currentEpisode -
-                                              1]);
-                                  if (episodeNum == 0 ||
-                                      episodeNum >
-                                          videoPageController
-                                              .roadList[videoPageController
-                                                  .currentRoad]
-                                              .identifier
-                                              .length) {
-                                    episodeNum =
-                                        videoPageController.currentEpisode;
-                                  }
-                                  showModalBottomSheet(
-                                      isScrollControlled: true,
-                                      constraints: BoxConstraints(
-                                          maxHeight: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              3 /
-                                              4,
-                                          maxWidth: (MediaQuery.of(context)
-                                                      .size
-                                                      .width >
-                                                  MediaQuery.of(context)
-                                                      .size
-                                                      .height)
-                                              ? MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  9 /
-                                                  16
-                                              : MediaQuery.of(context)
-                                                  .size
-                                                  .width),
-                                      clipBehavior: Clip.antiAlias,
-                                      context: context,
-                                      builder: (context) {
-                                        return EpisodeCommentsSheet(
-                                            episode: episodeNum);
-                                      }).whenComplete(() {
-                                    if (needRestart) {
-                                      playerController.play();
-                                    }
-                                    _focusNode.requestFocus();
-                                  });
-                                },
+                                onPressed: widget.showComment,
                               ),
                               // 追番
                               IconButton(
