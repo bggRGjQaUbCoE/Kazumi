@@ -24,12 +24,12 @@ class MainActivity: FlutterActivity() {
                 } else {
                     result.error("INVALID_ARGUMENT", "URL and MIME type required", null)
                 }
-            }
-            if (call.method == "checkIfInMultiWindowMode") {
+            } else if (call.method == "checkIfInMultiWindowMode") {
                 val isInMultiWindow = checkIfInMultiWindowMode()
                 result.success(isInMultiWindow)
+            } else {
+                result.notImplemented()
             }
-            result.notImplemented()
         }
     }
 
