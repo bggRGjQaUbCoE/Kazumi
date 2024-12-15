@@ -39,6 +39,39 @@ class _DanmakuSettingsWindowState extends State<DanmakuSettingsWindow> {
                   setting.put(SettingBoxKey.danmakuFontSize, value);
                 },
               ),
+              const Text('弹幕描边'),
+              Slider(
+                value: widget.danmakuController.option.strokeWidth,
+                min: 0,
+                max: 3,
+                divisions: 6,
+                label: widget.danmakuController.option.strokeWidth.toString(),
+                onChanged: (value) {
+                  setState(() => widget.danmakuController.updateOption(
+                        widget.danmakuController.option.copyWith(
+                          strokeWidth: value,
+                        ),
+                      ));
+                  setting.put(SettingBoxKey.danmakuStrokeWidth, value);
+                },
+              ),
+              const Text('弹幕粗细'),
+              Slider(
+                value: widget.danmakuController.option.fontWeight.toDouble(),
+                min: 0,
+                max: 8,
+                divisions: 8,
+                label:
+                    (widget.danmakuController.option.fontWeight + 1).toString(),
+                onChanged: (value) {
+                  setState(() => widget.danmakuController.updateOption(
+                        widget.danmakuController.option.copyWith(
+                          fontWeight: value.round(),
+                        ),
+                      ));
+                  setting.put(SettingBoxKey.danmakuFontWeight, value.round());
+                },
+              ),
               const Text('弹幕区域'),
               Slider(
                 value: widget.danmakuController.option.area,

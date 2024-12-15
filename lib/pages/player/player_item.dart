@@ -81,7 +81,7 @@ class _PlayerItemState extends State<PlayerItem>
 
   // 弹幕
   final _danmuKey = GlobalKey();
-  late bool _border;
+  late double _strokeWidth;
   late double _opacity;
   late double _duration;
   late double _fontSize;
@@ -736,7 +736,8 @@ class _PlayerItemState extends State<PlayerItem>
     webDavEnable = setting.get(SettingBoxKey.webDavEnable, defaultValue: false);
     playerController.danmakuOn =
         setting.get(SettingBoxKey.danmakuEnabledByDefault, defaultValue: false);
-    _border = setting.get(SettingBoxKey.danmakuBorder, defaultValue: true);
+    _strokeWidth =
+        setting.get(SettingBoxKey.danmakuStrokeWidth, defaultValue: 1.5);
     _opacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
     _duration = 8;
     _fontSize = setting.get(SettingBoxKey.danmakuFontSize,
@@ -1304,7 +1305,7 @@ class _PlayerItemState extends State<PlayerItem>
                           opacity: _opacity,
                           fontSize: _fontSize,
                           duration: _duration ~/ playerController.playerSpeed,
-                          showStroke: _border,
+                          strokeWidth: _strokeWidth,
                           fontWeight: _danmakuFontWeight,
                           massiveMode: _massiveMode,
                         ),
