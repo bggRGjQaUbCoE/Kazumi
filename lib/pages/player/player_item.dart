@@ -398,7 +398,6 @@ class _PlayerItemState extends State<PlayerItem>
 
   void _handleDanmaku() {
     if (playerController.danDanmakus.isEmpty) {
-      KazumiDialog.showToast(message: '当前剧集没有找到弹幕的说 尝试手动检索');
       showDanmakuSwitch();
       return;
     }
@@ -536,7 +535,7 @@ class _PlayerItemState extends State<PlayerItem>
           await DanmakuRequest.getDanmakuSearchResponse(keyword);
     } catch (e) {
       KazumiDialog.dismiss();
-      KazumiDialog.showToast(message: '检索弹幕失败 ${e.toString()}');
+      KazumiDialog.showToast(message: '弹幕检索错误: ${e.toString()}');
       return;
     }
     KazumiDialog.dismiss();
@@ -560,7 +559,7 @@ class _PlayerItemState extends State<PlayerItem>
                           danmakuInfo.animeId);
                 } catch (e) {
                   KazumiDialog.dismiss();
-                  KazumiDialog.showToast(message: '检索弹幕失败 ${e.toString()}');
+                  KazumiDialog.showToast(message: '弹幕检索错误: ${e.toString()}');
                   return;
                 }
                 KazumiDialog.dismiss();
