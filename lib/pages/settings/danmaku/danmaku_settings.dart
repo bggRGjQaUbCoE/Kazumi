@@ -96,13 +96,13 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
                 defaultVal: false,
               ),
             ),
-            const InkWell(
-              child: SetSwitchItem(
-                title: '弹幕描边',
-                setKey: SettingBoxKey.danmakuBorder,
-                defaultVal: true,
-              ),
-            ),
+            // const InkWell(
+            //   child: SetSwitchItem(
+            //     title: '弹幕描边',
+            //     setKey: SettingBoxKey.danmakuBorder,
+            //     defaultVal: true,
+            //   ),
+            // ),
             const InkWell(
               child: SetSwitchItem(
                 title: '顶部弹幕',
@@ -141,58 +141,57 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
             ),
             ListTile(
               onTap: () async {
-                KazumiDialog.show(
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('字体大小'),
-                        content: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter setState) {
-                          return Wrap(
-                            spacing: 8,
-                            runSpacing: 2,
-                            children: [
-                              for (final double i in danFontList) ...<Widget>[
-                                if (i == defaultDanmakuFontSize) ...<Widget>[
-                                  FilledButton(
-                                    onPressed: () async {
-                                      updateDanmakuFontSize(i);
-                                      KazumiDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ] else ...[
-                                  FilledButton.tonal(
-                                    onPressed: () async {
-                                      updateDanmakuFontSize(i);
-                                      KazumiDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ]
-                              ]
-                            ],
-                          );
-                        }),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => KazumiDialog.dismiss(),
-                            child: Text(
-                              '取消',
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.outline),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              updateDanmakuFontSize(
-                                  (Utils.isCompact()) ? 16.0 : 25.0);
-                              KazumiDialog.dismiss();
-                            },
-                            child: const Text('默认设置'),
-                          ),
+                KazumiDialog.show(builder: (context) {
+                  return AlertDialog(
+                    title: const Text('字体大小'),
+                    content: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 2,
+                        children: [
+                          for (final double i in danFontList) ...<Widget>[
+                            if (i == defaultDanmakuFontSize) ...<Widget>[
+                              FilledButton(
+                                onPressed: () async {
+                                  updateDanmakuFontSize(i);
+                                  KazumiDialog.dismiss();
+                                },
+                                child: Text(i.toString()),
+                              ),
+                            ] else ...[
+                              FilledButton.tonal(
+                                onPressed: () async {
+                                  updateDanmakuFontSize(i);
+                                  KazumiDialog.dismiss();
+                                },
+                                child: Text(i.toString()),
+                              ),
+                            ]
+                          ]
                         ],
                       );
-                    });
+                    }),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => KazumiDialog.dismiss(),
+                        child: Text(
+                          '取消',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          updateDanmakuFontSize(
+                              (Utils.isCompact()) ? 16.0 : 25.0);
+                          KazumiDialog.dismiss();
+                        },
+                        child: const Text('默认设置'),
+                      ),
+                    ],
+                  );
+                });
               },
               dense: false,
               title: const Text('字体大小'),
@@ -204,58 +203,56 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
             ),
             ListTile(
               onTap: () async {
-                KazumiDialog.show(
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('字体字重'),
-                        content: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter setState) {
-                          return Wrap(
-                            spacing: 8,
-                            runSpacing: 2,
-                            children: [
-                              for (final int i
-                                  in danFontWeightList) ...<Widget>[
-                                if (i == defaultDanmakuFontWeight) ...<Widget>[
-                                  FilledButton(
-                                    onPressed: () async {
-                                      updateDanmakuFontWeight(i);
-                                      KazumiDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ] else ...[
-                                  FilledButton.tonal(
-                                    onPressed: () async {
-                                      updateDanmakuFontWeight(i);
-                                      KazumiDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ]
-                              ]
-                            ],
-                          );
-                        }),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => KazumiDialog.dismiss(),
-                            child: Text(
-                              '取消',
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.outline),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              updateDanmakuFontWeight(4);
-                              KazumiDialog.dismiss();
-                            },
-                            child: const Text('默认设置'),
-                          ),
+                KazumiDialog.show(builder: (context) {
+                  return AlertDialog(
+                    title: const Text('字体字重'),
+                    content: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 2,
+                        children: [
+                          for (final int i in danFontWeightList) ...<Widget>[
+                            if (i == defaultDanmakuFontWeight) ...<Widget>[
+                              FilledButton(
+                                onPressed: () async {
+                                  updateDanmakuFontWeight(i);
+                                  KazumiDialog.dismiss();
+                                },
+                                child: Text(i.toString()),
+                              ),
+                            ] else ...[
+                              FilledButton.tonal(
+                                onPressed: () async {
+                                  updateDanmakuFontWeight(i);
+                                  KazumiDialog.dismiss();
+                                },
+                                child: Text(i.toString()),
+                              ),
+                            ]
+                          ]
                         ],
                       );
-                    });
+                    }),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => KazumiDialog.dismiss(),
+                        child: Text(
+                          '取消',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          updateDanmakuFontWeight(4);
+                          KazumiDialog.dismiss();
+                        },
+                        child: const Text('默认设置'),
+                      ),
+                    ],
+                  );
+                });
               },
               dense: false,
               title: const Text('字体字重'),
@@ -267,58 +264,56 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
             ),
             ListTile(
               onTap: () async {
-                KazumiDialog.show(
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('弹幕不透明度'),
-                        content: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter setState) {
-                          return Wrap(
-                            spacing: 8,
-                            runSpacing: 2,
-                            children: [
-                              for (final double i
-                                  in danOpacityList) ...<Widget>[
-                                if (i == defaultDanmakuOpacity) ...<Widget>[
-                                  FilledButton(
-                                    onPressed: () async {
-                                      updateDanmakuOpacity(i);
-                                      KazumiDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ] else ...[
-                                  FilledButton.tonal(
-                                    onPressed: () async {
-                                      updateDanmakuOpacity(i);
-                                      KazumiDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ]
-                              ]
-                            ],
-                          );
-                        }),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => KazumiDialog.dismiss(),
-                            child: Text(
-                              '取消',
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.outline),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              updateDanmakuOpacity(1.0);
-                              KazumiDialog.dismiss();
-                            },
-                            child: const Text('默认设置'),
-                          ),
+                KazumiDialog.show(builder: (context) {
+                  return AlertDialog(
+                    title: const Text('弹幕不透明度'),
+                    content: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 2,
+                        children: [
+                          for (final double i in danOpacityList) ...<Widget>[
+                            if (i == defaultDanmakuOpacity) ...<Widget>[
+                              FilledButton(
+                                onPressed: () async {
+                                  updateDanmakuOpacity(i);
+                                  KazumiDialog.dismiss();
+                                },
+                                child: Text(i.toString()),
+                              ),
+                            ] else ...[
+                              FilledButton.tonal(
+                                onPressed: () async {
+                                  updateDanmakuOpacity(i);
+                                  KazumiDialog.dismiss();
+                                },
+                                child: Text(i.toString()),
+                              ),
+                            ]
+                          ]
                         ],
                       );
-                    });
+                    }),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => KazumiDialog.dismiss(),
+                        child: Text(
+                          '取消',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          updateDanmakuOpacity(1.0);
+                          KazumiDialog.dismiss();
+                        },
+                        child: const Text('默认设置'),
+                      ),
+                    ],
+                  );
+                });
               },
               dense: false,
               title: const Text('弹幕不透明度'),
@@ -330,57 +325,56 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
             ),
             ListTile(
               onTap: () async {
-                KazumiDialog.show(
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('弹幕区域'),
-                        content: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter setState) {
-                          return Wrap(
-                            spacing: 8,
-                            runSpacing: 2,
-                            children: [
-                              for (final double i in danAreaList) ...<Widget>[
-                                if (i == defaultDanmakuArea) ...<Widget>[
-                                  FilledButton(
-                                    onPressed: () async {
-                                      updateDanmakuArea(i);
-                                      KazumiDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ] else ...[
-                                  FilledButton.tonal(
-                                    onPressed: () async {
-                                      updateDanmakuArea(i);
-                                      KazumiDialog.dismiss();
-                                    },
-                                    child: Text(i.toString()),
-                                  ),
-                                ]
-                              ]
-                            ],
-                          );
-                        }),
-                        actions: <Widget>[
-                          TextButton(
-                            onPressed: () => KazumiDialog.dismiss(),
-                            child: Text(
-                              '取消',
-                              style: TextStyle(
-                                  color: Theme.of(context).colorScheme.outline),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () async {
-                              updateDanmakuArea(1.0);
-                              KazumiDialog.dismiss();
-                            },
-                            child: const Text('默认设置'),
-                          ),
+                KazumiDialog.show(builder: (context) {
+                  return AlertDialog(
+                    title: const Text('弹幕区域'),
+                    content: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 2,
+                        children: [
+                          for (final double i in danAreaList) ...<Widget>[
+                            if (i == defaultDanmakuArea) ...<Widget>[
+                              FilledButton(
+                                onPressed: () async {
+                                  updateDanmakuArea(i);
+                                  KazumiDialog.dismiss();
+                                },
+                                child: Text(i.toString()),
+                              ),
+                            ] else ...[
+                              FilledButton.tonal(
+                                onPressed: () async {
+                                  updateDanmakuArea(i);
+                                  KazumiDialog.dismiss();
+                                },
+                                child: Text(i.toString()),
+                              ),
+                            ]
+                          ]
                         ],
                       );
-                    });
+                    }),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () => KazumiDialog.dismiss(),
+                        child: Text(
+                          '取消',
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.outline),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          updateDanmakuArea(1.0);
+                          KazumiDialog.dismiss();
+                        },
+                        child: const Text('默认设置'),
+                      ),
+                    ],
+                  );
+                });
               },
               dense: false,
               title: const Text('弹幕区域'),

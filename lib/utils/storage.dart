@@ -74,7 +74,8 @@ class GStorage {
   static Future<void> patchFavorites(String backupFilePath) async {
     final backupFile = File(backupFilePath);
     final backupContent = await backupFile.readAsBytes();
-    final tempBox = await Hive.openBox('tempFavoritesBox', bytes: backupContent);
+    final tempBox =
+        await Hive.openBox('tempFavoritesBox', bytes: backupContent);
     final tempBoxItems = tempBox.toMap().entries;
     debugPrint('webDav追番列表长度 ${tempBoxItems.length}');
 
@@ -96,7 +97,7 @@ class SettingBoxKey {
       alwaysOntop = 'alwaysOntop',
       defaultPlaySpeed = 'defaultPlaySpeed',
       danmakuEnhance = 'danmakuEnhance',
-      danmakuBorder = 'danmakuBorder',
+      danmakuStrokeWidth = 'danmakuStrokeWidth',
       danmakuOpacity = 'danmakuOpacity',
       danmakuFontSize = 'danmakuFontSize',
       danmakuTop = 'danmakuTop',
