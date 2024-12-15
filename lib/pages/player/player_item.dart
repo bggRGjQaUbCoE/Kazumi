@@ -15,7 +15,7 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/pages/video/video_controller.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:canvas_danmaku/canvas_danmaku.dart';
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:kazumi/bean/dialog/dialog_helper.dart';
 import 'package:screen_brightness_platform_interface/screen_brightness_platform_interface.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter_volume_controller/flutter_volume_controller.dart';
@@ -209,34 +209,32 @@ class _PlayerItemState extends State<PlayerItem>
 
   void showVideoInfo() async {
     String currentDemux = await Utils.getCurrentDemux();
-    SmartDialog.show(
-        animationTime: const Duration(milliseconds: 100),
-        onDismiss: () {
-          _focusNode.requestFocus();
-        },
+    KazumiDialog.show(
+        // onDismiss: () {
+        //   _focusNode.requestFocus();
+        // },
         builder: (context) {
-          return AlertDialog(
-            title: const Text('视频详情'),
-            content: SelectableText.rich(
+      return AlertDialog(
+        title: const Text('视频详情'),
+        content: SelectableText.rich(
+          TextSpan(
+            children: [
+              TextSpan(text: '规则: ${videoPageController.currentPlugin.name}\n'),
+              TextSpan(text: '硬件解码: ${haEnable ? '启用' : '禁用'}\n'),
+              TextSpan(text: '解复用器: $currentDemux\n'),
+              const TextSpan(text: '资源地址: '),
               TextSpan(
-                children: [
-                  TextSpan(
-                      text: '规则: ${videoPageController.currentPlugin.name}\n'),
-                  TextSpan(text: '硬件解码: ${haEnable ? '启用' : '禁用'}\n'),
-                  TextSpan(text: '解复用器: $currentDemux\n'),
-                  const TextSpan(text: '资源地址: '),
-                  TextSpan(
-                    text: playerController.videoUrl,
-                  ),
-                ],
+                text: playerController.videoUrl,
               ),
-              style: Theme.of(context).textTheme.bodyLarge!,
-            ),
-            actions: const [
-              TextButton(onPressed: SmartDialog.dismiss, child: Text('取消')),
             ],
-          );
-        });
+          ),
+          style: Theme.of(context).textTheme.bodyLarge!,
+        ),
+        actions: const [
+          TextButton(onPressed: KazumiDialog.dismiss, child: Text('取消')),
+        ],
+      );
+    });
   }
 
   Timer getPlayerTimer() {
@@ -332,8 +330,9 @@ class _PlayerItemState extends State<PlayerItem>
               videoPageController
                   .roadList[videoPageController.currentRoad].data.length &&
           !videoPageController.loading) {
-        SmartDialog.showToast(
-            '正在加载${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode]}');
+        KazumiDialog.showToast(
+            message:
+                '正在加载${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode]}');
         try {
           playerTimer!.cancel();
         } catch (_) {}
@@ -365,7 +364,7 @@ class _PlayerItemState extends State<PlayerItem>
         var webDav = WebDav();
         webDav.updateHistory();
       } catch (e) {
-        SmartDialog.showToast('同步记录失败 ${e.toString()}');
+        KazumiDialog.showToast(message: '同步记录失败 ${e.toString()}');
         KazumiLogger().log(Level.error, '同步记录失败 ${e.toString()}');
       }
     }
@@ -399,8 +398,7 @@ class _PlayerItemState extends State<PlayerItem>
 
   void _handleDanmaku() {
     if (playerController.danDanmakus.isEmpty) {
-      SmartDialog.showToast('当前剧集没有找到弹幕的说 尝试手动检索',
-          displayType: SmartToastType.last);
+      KazumiDialog.showToast(message: '当前剧集没有找到弹幕的说 尝试手动检索');
       showDanmakuSwitch();
       return;
     }
@@ -412,62 +410,60 @@ class _PlayerItemState extends State<PlayerItem>
   void showShootDanmakuSheet() {
     final TextEditingController textController = TextEditingController();
     bool isSending = false; // 追踪是否正在发送
-    SmartDialog.show(
-        animationTime: const Duration(milliseconds: 100),
-        onDismiss: () {
-          _focusNode.requestFocus();
-        },
+    KazumiDialog.show(
+        // onDismiss: () {
+        //   _focusNode.requestFocus();
+        // },
         builder: (context) {
-          return AlertDialog(
-            title: const Text('发送弹幕'),
-            content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return TextField(
-                controller: textController,
-              );
-            }),
-            actions: [
-              TextButton(
-                onPressed: () => SmartDialog.dismiss(),
-                child: Text(
-                  '取消',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.outline),
-                ),
-              ),
-              StatefulBuilder(
-                  builder: (BuildContext context, StateSetter setState) {
-                return TextButton(
-                  onPressed: isSending
-                      ? null
-                      : () async {
-                          final String msg = textController.text;
-                          if (msg.isEmpty) {
-                            SmartDialog.showToast('弹幕内容为空');
-                            return;
-                          } else if (msg.length > 100) {
-                            SmartDialog.showToast('弹幕内容过长');
-                            return;
-                          }
-                          setState(() {
-                            isSending = true; // 开始发送，更新状态
-                          });
-                          // Todo 接口方限制
-
-                          setState(() {
-                            isSending = false; // 发送结束，更新状态
-                          });
-                          SmartDialog.showToast('发送成功');
-                          danmakuController.addDanmaku(
-                              DanmakuContentItem(msg, selfSend: true));
-                          SmartDialog.dismiss();
-                        },
-                  child: Text(isSending ? '发送中' : '发送'),
-                );
-              })
-            ],
+      return AlertDialog(
+        title: const Text('发送弹幕'),
+        content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return TextField(
+            controller: textController,
           );
-        });
+        }),
+        actions: [
+          TextButton(
+            onPressed: () => KazumiDialog.dismiss(),
+            child: Text(
+              '取消',
+              style: TextStyle(color: Theme.of(context).colorScheme.outline),
+            ),
+          ),
+          StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return TextButton(
+              onPressed: isSending
+                  ? null
+                  : () async {
+                      final String msg = textController.text;
+                      if (msg.isEmpty) {
+                        KazumiDialog.showToast(message: '弹幕内容为空');
+                        return;
+                      } else if (msg.length > 100) {
+                        KazumiDialog.showToast(message: '弹幕内容过长');
+                        return;
+                      }
+                      setState(() {
+                        isSending = true; // 开始发送，更新状态
+                      });
+                      // Todo 接口方限制
+
+                      setState(() {
+                        isSending = false; // 发送结束，更新状态
+                      });
+                      KazumiDialog.showToast(message: '发送成功');
+                      danmakuController
+                          .addDanmaku(DanmakuContentItem(msg, selfSend: true));
+                      KazumiDialog.dismiss();
+                    },
+              child: Text(isSending ? '发送中' : '发送'),
+            );
+          })
+        ],
+      );
+    });
   }
 
   Future<void> _setPlaybackSpeed(double speed) async {
@@ -480,141 +476,132 @@ class _PlayerItemState extends State<PlayerItem>
   // 选择倍速
   void showSetSpeedSheet() {
     final double currentSpeed = playerController.playerSpeed;
-    SmartDialog.show(
-        animationTime: const Duration(milliseconds: 100),
-        builder: (context) {
-          return AlertDialog(
-            title: const Text('播放速度'),
-            content: StatefulBuilder(
-                builder: (BuildContext context, StateSetter setState) {
-              return Wrap(
-                spacing: 8,
-                runSpacing: 2,
-                children: [
-                  for (final double i in playSpeedList) ...<Widget>[
-                    if (i == currentSpeed)
-                      FilledButton(
-                        onPressed: () async {
-                          await _setPlaybackSpeed(i);
-                          SmartDialog.dismiss();
-                        },
-                        child: Text(i.toString()),
-                      )
-                    else
-                      FilledButton.tonal(
-                        onPressed: () async {
-                          await _setPlaybackSpeed(i);
-                          SmartDialog.dismiss();
-                        },
-                        child: Text(i.toString()),
-                      ),
-                  ]
-                ],
-              );
-            }),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () => SmartDialog.dismiss(),
-                child: Text(
-                  '取消',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.outline),
-                ),
-              ),
-              TextButton(
-                onPressed: () async {
-                  await _setPlaybackSpeed(1.0);
-                  SmartDialog.dismiss();
-                },
-                child: const Text('默认速度'),
-              ),
+    KazumiDialog.show(builder: (context) {
+      return AlertDialog(
+        title: const Text('播放速度'),
+        content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setState) {
+          return Wrap(
+            spacing: 8,
+            runSpacing: 2,
+            children: [
+              for (final double i in playSpeedList) ...<Widget>[
+                if (i == currentSpeed)
+                  FilledButton(
+                    onPressed: () async {
+                      await _setPlaybackSpeed(i);
+                      KazumiDialog.dismiss();
+                    },
+                    child: Text(i.toString()),
+                  )
+                else
+                  FilledButton.tonal(
+                    onPressed: () async {
+                      await _setPlaybackSpeed(i);
+                      KazumiDialog.dismiss();
+                    },
+                    child: Text(i.toString()),
+                  ),
+              ]
             ],
           );
-        });
+        }),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => KazumiDialog.dismiss(),
+            child: Text(
+              '取消',
+              style: TextStyle(color: Theme.of(context).colorScheme.outline),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              await _setPlaybackSpeed(1.0);
+              KazumiDialog.dismiss();
+            },
+            child: const Text('默认速度'),
+          ),
+        ],
+      );
+    });
   }
 
   void showDanmakuSearchDialog(String keyword) async {
-    SmartDialog.dismiss();
-    SmartDialog.showLoading(msg: '弹幕检索中');
+    KazumiDialog.dismiss();
+    KazumiDialog.showLoading(msg: '弹幕检索中');
     DanmakuSearchResponse danmakuSearchResponse;
     DanmakuEpisodeResponse danmakuEpisodeResponse;
     try {
       danmakuSearchResponse =
           await DanmakuRequest.getDanmakuSearchResponse(keyword);
     } catch (e) {
-      SmartDialog.dismiss();
-      SmartDialog.showToast('检索弹幕失败 ${e.toString()}');
+      KazumiDialog.dismiss();
+      KazumiDialog.showToast(message: '检索弹幕失败 ${e.toString()}');
       return;
     }
-    SmartDialog.dismiss();
+    KazumiDialog.dismiss();
     if (danmakuSearchResponse.animes.isEmpty) {
-      SmartDialog.showToast('未找到匹配结果');
+      KazumiDialog.showToast(message: '未找到匹配结果');
       return;
     }
-    await SmartDialog.show(
-        animationTime: const Duration(milliseconds: 100),
-        builder: (context) {
-          return Dialog(
-            child: ListView(
-              shrinkWrap: true,
-              children: danmakuSearchResponse.animes.map((danmakuInfo) {
-                return ListTile(
-                  title: Text(danmakuInfo.animeTitle),
-                  onTap: () async {
-                    SmartDialog.dismiss();
-                    SmartDialog.showLoading(msg: '弹幕检索中');
-                    try {
-                      danmakuEpisodeResponse =
-                          await DanmakuRequest.getDanDanEpisodesByBangumiID(
-                              danmakuInfo.animeId);
-                    } catch (e) {
-                      SmartDialog.dismiss();
-                      SmartDialog.showToast('检索弹幕失败 ${e.toString()}');
-                      return;
-                    }
-                    SmartDialog.dismiss();
-                    if (danmakuEpisodeResponse.episodes.isEmpty) {
-                      SmartDialog.showToast('未找到匹配结果');
-                      return;
-                    }
-                    SmartDialog.show(
-                        animationTime: const Duration(milliseconds: 100),
-                        builder: (context) {
-                          return Dialog(
-                            child: ListView(
-                              shrinkWrap: true,
-                              children: danmakuEpisodeResponse.episodes
-                                  .map((episode) {
-                                return ListTile(
-                                  title: Text(episode.episodeTitle),
-                                  onTap: () {
-                                    SmartDialog.dismiss();
-                                    SmartDialog.showToast('弹幕切换中');
-                                    playerController.getDanDanmakuByEpisodeID(
-                                        episode.episodeId);
-                                  },
-                                );
-                              }).toList(),
-                            ),
-                          );
-                        });
-                  },
-                );
-              }).toList(),
-            ),
-          );
-        });
+    await KazumiDialog.show(builder: (context) {
+      return Dialog(
+        child: ListView(
+          shrinkWrap: true,
+          children: danmakuSearchResponse.animes.map((danmakuInfo) {
+            return ListTile(
+              title: Text(danmakuInfo.animeTitle),
+              onTap: () async {
+                KazumiDialog.dismiss();
+                KazumiDialog.showLoading(msg: '弹幕检索中');
+                try {
+                  danmakuEpisodeResponse =
+                      await DanmakuRequest.getDanDanEpisodesByBangumiID(
+                          danmakuInfo.animeId);
+                } catch (e) {
+                  KazumiDialog.dismiss();
+                  KazumiDialog.showToast(message: '检索弹幕失败 ${e.toString()}');
+                  return;
+                }
+                KazumiDialog.dismiss();
+                if (danmakuEpisodeResponse.episodes.isEmpty) {
+                  KazumiDialog.showToast(message: '未找到匹配结果');
+                  return;
+                }
+                KazumiDialog.show(builder: (context) {
+                  return Dialog(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: danmakuEpisodeResponse.episodes.map((episode) {
+                        return ListTile(
+                          title: Text(episode.episodeTitle),
+                          onTap: () {
+                            KazumiDialog.dismiss();
+                            KazumiDialog.showToast(message: '弹幕切换中');
+                            playerController
+                                .getDanDanmakuByEpisodeID(episode.episodeId);
+                          },
+                        );
+                      }).toList(),
+                    ),
+                  );
+                });
+              },
+            );
+          }).toList(),
+        ),
+      );
+    });
   }
 
   // 弹幕查询
   void showDanmakuSwitch() {
-    SmartDialog.show(
-      animationTime: const Duration(milliseconds: 100),
-      onDismiss: () {
-        // workaround for foucus node.
-        // input in textfield generated by flutter_smart_dialog will disable autofocus, which will cause the keyboard event lost.
-        _focusNode.requestFocus();
-      },
+    KazumiDialog.show(
+      // onDismiss: () {
+      //   // workaround for foucus node.
+      //   // input in textfield generated by flutter_smart_dialog will disable autofocus, which will cause the keyboard event lost.
+      //   _focusNode.requestFocus();
+      // },
       builder: (context) {
         final TextEditingController searchTextController =
             TextEditingController();
@@ -632,7 +619,7 @@ class _PlayerItemState extends State<PlayerItem>
           actions: [
             TextButton(
               onPressed: () {
-                SmartDialog.dismiss();
+                KazumiDialog.dismiss();
                 _focusNode.requestFocus();
               },
               child: Text(
@@ -691,7 +678,7 @@ class _PlayerItemState extends State<PlayerItem>
   }
 
   Future<void> _handleScreenshot() async {
-    SmartDialog.showToast('截图中...', displayType: SmartToastType.onlyRefresh);
+    KazumiDialog.showToast(message: '截图中...');
 
     try {
       Uint8List? screenshot =
@@ -699,14 +686,12 @@ class _PlayerItemState extends State<PlayerItem>
       final result = await SaverGallery.saveImage(screenshot!,
           fileName: DateTime.timestamp().toString(), skipIfExists: false);
       if (result.isSuccess) {
-        SmartDialog.showToast('截图保存到相簿成功',
-            displayType: SmartToastType.onlyRefresh);
+        KazumiDialog.showToast(message: '截图保存到相簿成功');
       } else {
-        SmartDialog.showToast('截图保存失败：${result.errorMessage}',
-            displayType: SmartToastType.onlyRefresh);
+        KazumiDialog.showToast(message: '截图保存失败：${result.errorMessage}');
       }
     } catch (e) {
-      SmartDialog.showToast('截图失败：$e', displayType: SmartToastType.onlyRefresh);
+      KazumiDialog.showToast(message: '截图失败：$e');
     }
   }
 
@@ -798,9 +783,12 @@ class _PlayerItemState extends State<PlayerItem>
     isFavorite = favoriteController.isFavorite(infoController.bangumiItem);
 
     return PopScope(
-      // key: _key,
       canPop: true,
       onPopInvokedWithResult: (bool didPop, Object? result) {
+        debugPrint("checkPoint: didPop: $didPop");
+        if (didPop) {
+          return;
+        }
         onBackPressed(context);
       },
       child: Observer(builder: (context) {
@@ -838,8 +826,10 @@ class _PlayerItemState extends State<PlayerItem>
                   child: Stack(alignment: Alignment.center, children: [
                     Center(
                         child: Focus(
-                            focusNode: _focusNode,
-                            autofocus: true,
+                            // workaround for #461
+                            // I don't know why, but the focus node will break popscope.
+                            focusNode: Utils.isDesktop() ? _focusNode : null,
+                            autofocus: Utils.isDesktop(),
                             onKeyEvent: (focusNode, KeyEvent event) {
                               if (event is KeyDownEvent) {
                                 // 当空格键被按下时
@@ -1471,11 +1461,12 @@ class _PlayerItemState extends State<PlayerItem>
                                   if (isFavorite) {
                                     favoriteController.deleteFavorite(
                                         infoController.bangumiItem);
-                                    SmartDialog.showToast('取消追番成功');
+                                    KazumiDialog.showToast(message: '取消追番成功');
                                   } else {
                                     favoriteController.addFavorite(
                                         infoController.bangumiItem);
-                                    SmartDialog.showToast('自己追的番要好好看完哦');
+                                    KazumiDialog.showToast(
+                                        message: '自己追的番要好好看完哦');
                                   }
                                   setState(() {
                                     isFavorite = !isFavorite;
@@ -1522,16 +1513,10 @@ class _PlayerItemState extends State<PlayerItem>
                                 },
                                 onSelected: (value) {
                                   if (value == 0) {
-                                    SmartDialog.show(
-                                        animationTime:
-                                            const Duration(milliseconds: 100),
-                                        builder: (context) {
-                                          return SizedBox(
-                                              height: 440,
-                                              child: DanmakuSettingsWindow(
-                                                  danmakuController:
-                                                      danmakuController));
-                                        });
+                                    KazumiDialog.show(builder: (context) {
+                                      return DanmakuSettingsWindow(
+                                          danmakuController: danmakuController);
+                                    });
                                   }
                                   if (value == 1) {
                                     showDanmakuSwitch();
@@ -1602,12 +1587,14 @@ class _PlayerItemState extends State<PlayerItem>
                                                     .currentRoad]
                                                 .data
                                                 .length) {
-                                          SmartDialog.showToast('已经是最新一集',
-                                              displayType: SmartToastType.last);
+                                          KazumiDialog.showToast(
+                                            message: '已经是最新一集',
+                                          );
                                           return;
                                         }
-                                        SmartDialog.showToast(
-                                            '正在加载${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode]}');
+                                        KazumiDialog.showToast(
+                                            message:
+                                                '正在加载${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode]}');
                                         videoPageController.changeEpisode(
                                             videoPageController.currentEpisode +
                                                 1,
@@ -1655,8 +1642,9 @@ class _PlayerItemState extends State<PlayerItem>
                                       onPressed: () {
                                         if (playerController
                                             .danDanmakus.isEmpty) {
-                                          SmartDialog.showToast('当前剧集不支持弹幕发送的说',
-                                              displayType: SmartToastType.last);
+                                          KazumiDialog.showToast(
+                                            message: '当前剧集不支持弹幕发送的说',
+                                          );
                                           return;
                                         }
                                         showShootDanmakuSheet();

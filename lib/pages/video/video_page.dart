@@ -16,7 +16,7 @@ import 'package:kazumi/utils/storage.dart';
 import 'package:kazumi/utils/utils.dart';
 import 'package:flutter/services.dart';
 import 'package:kazumi/bean/appbar/drag_to_move_bar.dart' as dtb;
-import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:kazumi/bean/dialog/dialog_helper.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 
 class VideoPage extends StatefulWidget {
@@ -539,8 +539,7 @@ class _VideoPageState extends State<VideoPage>
                 padding: WidgetStateProperty.all(EdgeInsets.zero),
               ),
               onPressed: () {
-                SmartDialog.show(
-                    animationTime: const Duration(milliseconds: 100),
+                KazumiDialog.show(
                     builder: (context) {
                       return AlertDialog(
                         title: const Text('播放列表'),
@@ -556,7 +555,7 @@ class _VideoPageState extends State<VideoPage>
                                 if (i == currentRoad + 1) ...<Widget>[
                                   FilledButton(
                                     onPressed: () {
-                                      SmartDialog.dismiss();
+                                      KazumiDialog.dismiss();
                                       setState(() {
                                         currentRoad = i - 1;
                                       });
@@ -566,7 +565,7 @@ class _VideoPageState extends State<VideoPage>
                                 ] else ...[
                                   FilledButton.tonal(
                                     onPressed: () {
-                                      SmartDialog.dismiss();
+                                      KazumiDialog.dismiss();
                                       setState(() {
                                         currentRoad = i - 1;
                                       });
