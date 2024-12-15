@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:catcher_2/catcher_2.dart';
 import 'package:flutter/material.dart';
 import 'package:kazumi/app_module.dart';
 import 'package:kazumi/app_widget.dart';
 import 'package:flutter_modular/flutter_modular.dart';
+import 'package:kazumi/utils/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:kazumi/utils/storage.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -41,6 +43,7 @@ void main() async {
       systemNavigationBarContrastEnforced: false,
     ));
   }
+
   try {
     await Hive.initFlutter(
         '${(await getApplicationSupportDirectory()).path}/hive');
@@ -55,8 +58,31 @@ void main() async {
   }
   Request();
   await Request.setCookie();
-  runApp(ModularApp(
-    module: AppModule(),
-    child: const AppWidget(),
-  ));
+
+  final Catcher2Options debugConfig = Catcher2Options(
+    SilentReportMode(),
+    [
+      FileHandler(await getLogsPath()),
+      ConsoleHandler(
+        enableDeviceParameters: false,
+        enableApplicationParameters: false,
+      )
+    ],
+  );
+
+  final Catcher2Options releaseConfig = Catcher2Options(
+    SilentReportMode(),
+    [FileHandler(await getLogsPath())],
+  );
+
+  Catcher2(
+    debugConfig: debugConfig,
+    releaseConfig: releaseConfig,
+    runAppFunction: () {
+      runApp(ModularApp(
+        module: AppModule(),
+        child: const AppWidget(),
+      ));
+    },
+  );
 }

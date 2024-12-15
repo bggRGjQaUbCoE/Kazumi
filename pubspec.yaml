@@ -73,7 +73,8 @@ dependencies:
   tray_manager: ^0.2.3
   dlna_dart: ^0.0.8
   screen_pixel: ^0.0.3
-  logger: ^2.4.0
+  catcher_2: ^2.1.0
+  logger: ^2.5.0
   flutter_rating_bar: ^4.0.1
   scrollview_observer: ^1.22.0
   styled_text: ^9.0.0-beta-4

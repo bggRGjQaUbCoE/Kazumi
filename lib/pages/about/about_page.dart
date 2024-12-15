@@ -186,6 +186,13 @@ class _AboutPageState extends State<AboutPage> {
               ),
               ListTile(
                 onTap: () {
+                  Modular.to.pushNamed('/settings/about/catcherLogs');
+                },
+                dense: false,
+                title: const Text('Catcher日志'),
+              ),
+              ListTile(
+                onTap: () {
                   _showCacheDialog();
                 },
                 dense: false,
