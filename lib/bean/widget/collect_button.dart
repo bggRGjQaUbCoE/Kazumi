@@ -44,7 +44,7 @@ class _CollectButtonState extends State<CollectButton> {
   Widget build(BuildContext context) {
     return PopupMenuButton(
       tooltip: '',
-      initialValue: collectType,
+      // initialValue: collectType,
       child: widget.withRounder
           ? NonClickableIconButton(
               icon: Icon(_getIcon(collectType)),
@@ -61,6 +61,7 @@ class _CollectButtonState extends State<CollectButton> {
           6,
           (index) => PopupMenuItem(
             value: index,
+            enabled: index != collectType,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
