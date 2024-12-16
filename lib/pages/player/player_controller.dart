@@ -31,6 +31,7 @@ abstract class _PlayerController with Store {
   final VideoPageController videoPageController =
       Modular.get<VideoPageController>();
 
+  int? danmakuOffset;
   @observable
   Map<int, List<Danmaku>> danDanmakus = {};
 
@@ -152,7 +153,10 @@ abstract class _PlayerController with Store {
 
     // error handle
     mediaPlayer.stream.error.listen((event) {
-      KazumiDialog.showToast(message: '播放器内部错误 ${event.toString()} $videoUrl', duration: const Duration(seconds: 5), showUndoButton: true);
+      KazumiDialog.showToast(
+          message: '播放器内部错误 ${event.toString()} $videoUrl',
+          duration: const Duration(seconds: 5),
+          showUndoButton: true);
       KazumiLogger().log(
           Level.error, 'Player intent error: ${event.toString()} $videoUrl');
     });

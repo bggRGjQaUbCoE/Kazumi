@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/bean/appbar/sys_app_bar.dart';
+import 'package:kazumi/modules/danmaku/danmaku_module.dart';
 import 'package:kazumi/pages/info/info_controller.dart';
 import 'package:kazumi/pages/player/episode_comments_sheet.dart';
 import 'package:kazumi/pages/player/player_controller.dart';
@@ -498,7 +499,84 @@ class _VideoPageState extends State<VideoPage>
                     // }
                     // _focusNode.requestFocus();
                     // });
-                  }),
+                  },
+                  showModDanmakuSheet: () {
+                    _bottomSheetController = _key.currentState?.showBottomSheet(
+                      (context) {
+                        playerController.danmakuOffset ??= 0;
+                        Map<int, List<Danmaku>> oriDanDanmakus = {};
+                        if (playerController.danmakuOffset != 0) {
+                          playerController.danDanmakus.forEach((key, value) {
+                            oriDanDanmakus[
+                                key + playerController.danmakuOffset!] = value;
+                          });
+                        } else {
+                          oriDanDanmakus = playerController.danDanmakus;
+                        }
+                        String getLabel() => playerController.danmakuOffset == 0
+                            ? '不变'
+                            : '${playerController.danmakuOffset! < 0 ? '慢' : '快'}${playerController.danmakuOffset!.abs()}秒';
+                        return StatefulBuilder(
+                          builder: (context, setState) => Scaffold(
+                            appBar: AppBar(
+                              automaticallyImplyLeading: false,
+                              title: const Text(
+                                '弹幕时间轴调整',
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              actions: [
+                                IconButton(
+                                  tooltip: '关闭',
+                                  onPressed: () => Navigator.pop(context),
+                                  icon: const Icon(Icons.clear),
+                                ),
+                                const SizedBox(width: 16),
+                              ],
+                            ),
+                            body: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(getLabel()),
+                                Slider(
+                                  value: playerController.danmakuOffset!
+                                      .toDouble(),
+                                  min: -15,
+                                  max: 15,
+                                  divisions: 30,
+                                  label: getLabel(),
+                                  onChanged: (value) {
+                                    playerController.danmakuOffset =
+                                        value.round();
+                                    setState(() {});
+                                    Map<int, List<Danmaku>> danDanmakus = {};
+                                    oriDanDanmakus.forEach((key, value) {
+                                      danDanmakus[key -
+                                              playerController.danmakuOffset!] =
+                                          value;
+                                    });
+                                    playerController.danmakuController.clear();
+                                    playerController.danDanmakus = danDanmakus;
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                      constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height >
+                                  MediaQuery.of(context).size.width
+                              ? MediaQuery.of(context).size.height -
+                                  MediaQuery.of(context).size.width * 9 / 16 -
+                                  MediaQuery.paddingOf(context).top
+                              : MediaQuery.of(context).size.height,
+                          maxWidth: MediaQuery.of(context).size.width >
+                                  MediaQuery.of(context).size.height
+                              ? MediaQuery.of(context).size.width * 9 / 16
+                              : MediaQuery.of(context).size.width),
+                    );
+                  },
+                ),
         ),
 
         /// workaround for webview_windows
@@ -539,46 +617,45 @@ class _VideoPageState extends State<VideoPage>
                 padding: WidgetStateProperty.all(EdgeInsets.zero),
               ),
               onPressed: () {
-                KazumiDialog.show(
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('播放列表'),
-                        content: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter innerSetState) {
-                          return Wrap(
-                            spacing: 8,
-                            runSpacing: 2,
-                            children: [
-                              for (int i = 1;
-                                  i <= videoPageController.roadList.length;
-                                  i++) ...<Widget>[
-                                if (i == currentRoad + 1) ...<Widget>[
-                                  FilledButton(
-                                    onPressed: () {
-                                      KazumiDialog.dismiss();
-                                      setState(() {
-                                        currentRoad = i - 1;
-                                      });
-                                    },
-                                    child: Text('播放列表$i'),
-                                  ),
-                                ] else ...[
-                                  FilledButton.tonal(
-                                    onPressed: () {
-                                      KazumiDialog.dismiss();
-                                      setState(() {
-                                        currentRoad = i - 1;
-                                      });
-                                    },
-                                    child: Text('播放列表$i'),
-                                  ),
-                                ]
-                              ]
-                            ],
-                          );
-                        }),
+                KazumiDialog.show(builder: (context) {
+                  return AlertDialog(
+                    title: const Text('播放列表'),
+                    content: StatefulBuilder(builder:
+                        (BuildContext context, StateSetter innerSetState) {
+                      return Wrap(
+                        spacing: 8,
+                        runSpacing: 2,
+                        children: [
+                          for (int i = 1;
+                              i <= videoPageController.roadList.length;
+                              i++) ...<Widget>[
+                            if (i == currentRoad + 1) ...<Widget>[
+                              FilledButton(
+                                onPressed: () {
+                                  KazumiDialog.dismiss();
+                                  setState(() {
+                                    currentRoad = i - 1;
+                                  });
+                                },
+                                child: Text('播放列表$i'),
+                              ),
+                            ] else ...[
+                              FilledButton.tonal(
+                                onPressed: () {
+                                  KazumiDialog.dismiss();
+                                  setState(() {
+                                    currentRoad = i - 1;
+                                  });
+                                },
+                                child: Text('播放列表$i'),
+                              ),
+                            ]
+                          ]
+                        ],
                       );
-                    });
+                    }),
+                  );
+                });
               },
               child: Text(
                 '播放列表${currentRoad + 1} ',

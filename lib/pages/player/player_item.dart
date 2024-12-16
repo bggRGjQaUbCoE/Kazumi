@@ -40,12 +40,14 @@ class PlayerItem extends StatefulWidget {
     required this.locateEpisode,
     required this.showComment,
     required this.handleFullscreen,
+    required this.showModDanmakuSheet,
   });
 
   final VoidCallback openMenu;
   final VoidCallback locateEpisode;
   final VoidCallback showComment;
   final VoidCallback handleFullscreen;
+  final VoidCallback showModDanmakuSheet;
 
   @override
   State<PlayerItem> createState() => _PlayerItemState();
@@ -1456,7 +1458,9 @@ class _PlayerItemState extends State<PlayerItem>
                                 onPressed: widget.showComment,
                               ),
                               // 追番
-                              CollectButton(bangumiItem: infoController.bangumiItem, withRounder: false),
+                              CollectButton(
+                                  bangumiItem: infoController.bangumiItem,
+                                  withRounder: false),
                               PopupMenuButton(
                                 tooltip: '',
                                 icon: const Icon(
@@ -1619,22 +1623,36 @@ class _PlayerItemState extends State<PlayerItem>
                                       ),
                                     ),
                               // 弹幕相关
-                              (playerController.danmakuOn)
-                                  ? IconButton(
-                                      color: Colors.white,
-                                      icon: const Icon(Icons.notes),
-                                      onPressed: () {
-                                        if (playerController
-                                            .danDanmakus.isEmpty) {
-                                          KazumiDialog.showToast(
-                                            message: '当前剧集不支持弹幕发送的说',
-                                          );
-                                          return;
-                                        }
-                                        showShootDanmakuSheet();
-                                      },
-                                    )
-                                  : const SizedBox.shrink(),
+                              if (playerController.danmakuOn) ...[
+                                IconButton(
+                                  color: Colors.white,
+                                  icon: const Icon(Icons.notes),
+                                  onPressed: () {
+                                    if (playerController.danDanmakus.isEmpty) {
+                                      KazumiDialog.showToast(
+                                        message: '当前剧集不支持弹幕发送的说',
+                                      );
+                                      return;
+                                    }
+                                    showShootDanmakuSheet();
+                                  },
+                                ),
+                                IconButton(
+                                  tooltip: '弹幕时间轴调整',
+                                  color: Colors.white,
+                                  icon: const Icon(Icons
+                                      .keyboard_double_arrow_right_rounded),
+                                  onPressed: () {
+                                    if (playerController.danDanmakus.isEmpty) {
+                                      KazumiDialog.showToast(
+                                        message: '当前剧集不支持弹幕',
+                                      );
+                                      return;
+                                    }
+                                    widget.showModDanmakuSheet();
+                                  },
+                                ),
+                              ],
                               IconButton(
                                 color: Colors.white,
                                 icon: Icon(playerController.danmakuOn
