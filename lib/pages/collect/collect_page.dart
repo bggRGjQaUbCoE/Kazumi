@@ -85,13 +85,9 @@ class _CollectPageState extends State<CollectPage>
                       : const Icon(Icons.edit))
             ],
           ),
-          body: Padding(
-              padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
-              child: Observer(
-                builder: (context) {
-                  return renderBody(orientation);
-                }
-              )),
+          body: Observer(builder: (context) {
+            return renderBody(orientation);
+          }),
         ),
       );
     });
@@ -113,56 +109,63 @@ class _CollectPageState extends State<CollectPage>
   List<Widget> contentGrid(
       List<CollectedBangumi> collectedBangumiList, Orientation orientation) {
     List<Widget> gridViewList = [];
-    List<List<CollectedBangumi>> collectedBangumiRenderItemList = [
-      collectedBangumiList.where((element) => element.type == 1).toList(),
-      collectedBangumiList.where((element) => element.type == 2).toList(),
-      collectedBangumiList.where((element) => element.type == 3).toList(),
-      collectedBangumiList.where((element) => element.type == 4).toList(),
-      collectedBangumiList.where((element) => element.type == 5).toList(),
-    ];
+    List<List<CollectedBangumi>> collectedBangumiRenderItemList =
+        List.generate(tabs.length, (_) => <CollectedBangumi>[]);
+    for (CollectedBangumi element in collectedBangumiList) {
+      collectedBangumiRenderItemList[element.type - 1].add(element);
+    }
+    for (List<CollectedBangumi> list in collectedBangumiRenderItemList) {
+      list.sort((a, b) => b.time.millisecondsSinceEpoch
+          .compareTo(a.time.millisecondsSinceEpoch));
+    }
     int crossCount = orientation != Orientation.portrait ? 6 : 3;
     for (List<CollectedBangumi> collectedBangumiRenderItem
         in collectedBangumiRenderItemList) {
       gridViewList.add(
-        CustomScrollView(
-          slivers: [
-            SliverGrid(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                mainAxisSpacing: StyleString.cardSpace - 2,
-                crossAxisSpacing: StyleString.cardSpace,
-                crossAxisCount: crossCount,
-                mainAxisExtent:
-                    MediaQuery.of(context).size.width / crossCount / 0.65 +
-                        MediaQuery.textScalerOf(context).scale(32.0),
-              ),
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  return collectedBangumiRenderItem.isNotEmpty
-                      ? Stack(
-                          children: [
-                            BangumiCardV(
-                              bangumiItem:
-                                  collectedBangumiRenderItem[index].bangumiItem,
-                              canTap: !showDelete,
-                            ),
-                            Positioned(
-                              right: 5,
-                              bottom: 5,
-                              child: showDelete
-                                  ? CollectButton(bangumiItem: collectedBangumiRenderItem[index].bangumiItem)
-                                  : Container(),
-                            ),
-                          ],
-                        )
-                      : null;
-                },
-                childCount: collectedBangumiRenderItem.isNotEmpty
-                    ? collectedBangumiRenderItem.length
-                    : 10,
-              ),
-            ),
-          ],
-        ),
+        collectedBangumiRenderItem.isNotEmpty
+            ? CustomScrollView(
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.all(8),
+                    sliver: SliverGrid(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        mainAxisSpacing: StyleString.cardSpace - 2,
+                        crossAxisSpacing: StyleString.cardSpace,
+                        crossAxisCount: crossCount,
+                        mainAxisExtent: MediaQuery.of(context).size.width /
+                                crossCount /
+                                0.65 +
+                            MediaQuery.textScalerOf(context).scale(32.0),
+                      ),
+                      delegate: SliverChildBuilderDelegate(
+                        (BuildContext context, int index) {
+                          return Stack(
+                            children: [
+                              BangumiCardV(
+                                bangumiItem: collectedBangumiRenderItem[index]
+                                    .bangumiItem,
+                                canTap: !showDelete,
+                              ),
+                              Positioned(
+                                right: 5,
+                                bottom: 5,
+                                child: showDelete
+                                    ? CollectButton(
+                                        bangumiItem:
+                                            collectedBangumiRenderItem[index]
+                                                .bangumiItem)
+                                    : const SizedBox.shrink(),
+                              ),
+                            ],
+                          );
+                        },
+                        childCount: collectedBangumiRenderItem.length,
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            : const Center(child: Text('空')),
       );
     }
     return gridViewList;

@@ -6,6 +6,18 @@ allprojects {
 }
 
 rootProject.buildDir = '../build'
+
+// subprojects {
+//     afterEvaluate { project ->
+//         Integer pluginCompileSdk = project.android.compileSdk
+//         if (project.name == "flutter_mailer" && pluginCompileSdk != null && pluginCompileSdk < 31) {
+//             project.android {
+//                 compileSdkVersion 31
+//             }
+//         }
+//     }
+// }
+
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }

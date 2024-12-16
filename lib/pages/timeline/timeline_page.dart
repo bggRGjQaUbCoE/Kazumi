@@ -207,7 +207,7 @@ class _TimelinePageState extends State<TimelinePage>
                                                       selectedSeason
                                                           .toString()),
                                                 )
-                                          : Container(),
+                                          : const SizedBox.shrink(),
                                 ],
                               ),
                             ),

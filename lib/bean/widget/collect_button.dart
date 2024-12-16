@@ -32,6 +32,7 @@ class _CollectButtonState extends State<CollectButton> {
   Widget build(BuildContext context) {
     return PopupMenuButton(
       tooltip: '',
+      initialValue: collectType,
       child: widget.withRounder
           ? NonClickableIconButton(icon: Icon(
               () {
@@ -52,8 +53,8 @@ class _CollectButtonState extends State<CollectButton> {
               }(),
             ))
           : Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Icon(
+              padding: const EdgeInsets.all(8.0),
+              child: Icon(
                 () {
                   switch (collectType) {
                     case 1:
@@ -72,7 +73,7 @@ class _CollectButtonState extends State<CollectButton> {
                 }(),
                 color: Colors.white,
               ),
-          ),
+            ),
       itemBuilder: (context) {
         return const [
           PopupMenuItem(

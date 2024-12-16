@@ -76,14 +76,12 @@ abstract class _CollectController with Store {
   // migrate collect from old version (favorites)
   Future<void> migrateCollect() async {
     if (favorites.isNotEmpty) {
-      int count = 0;
       for (BangumiItem bangumiItem in favorites) {
         await addCollect(bangumiItem, type: 1);
-        count++;
       }
       await GStorage.favorites.clear();
       await GStorage.favorites.flush();
-      KazumiLogger().log(Level.debug, '检测到$count条未分类追番记录, 已迁移');
+      KazumiLogger().log(Level.debug, '检测到${favorites.length}条未分类追番记录, 已迁移');
     }
   }
 }
