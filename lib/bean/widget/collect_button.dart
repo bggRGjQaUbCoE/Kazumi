@@ -4,8 +4,11 @@ import 'package:kazumi/pages/collect/collect_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 
 class CollectButton extends StatefulWidget {
-  const CollectButton(
-      {super.key, required this.bangumiItem, this.withRounder = true});
+  const CollectButton({
+    super.key,
+    required this.bangumiItem,
+    this.withRounder = true,
+  });
   final BangumiItem bangumiItem;
   final bool withRounder;
 
@@ -28,97 +31,52 @@ class _CollectButtonState extends State<CollectButton> {
     collectType = collectController.getCollectType(widget.bangumiItem);
   }
 
+  IconData _getIcon(int collectType) => switch (collectType) {
+        1 => Icons.favorite,
+        2 => Icons.star_rounded,
+        3 => Icons.pending_actions,
+        4 => Icons.done,
+        5 => Icons.heart_broken,
+        _ => Icons.favorite_border,
+      };
+
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton(
       tooltip: '',
       initialValue: collectType,
       child: widget.withRounder
-          ? NonClickableIconButton(icon: Icon(
-              () {
-                switch (collectType) {
-                  case 1:
-                    return Icons.favorite;
-                  case 2:
-                    return Icons.star_rounded;
-                  case 3:
-                    return Icons.pending_actions;
-                  case 4:
-                    return Icons.done;
-                  case 5:
-                    return Icons.heart_broken;
-                  default:
-                    return Icons.favorite_border;
-                }
-              }(),
-            ))
+          ? NonClickableIconButton(
+              icon: Icon(_getIcon(collectType)),
+            )
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: Icon(
-                () {
-                  switch (collectType) {
-                    case 1:
-                      return Icons.favorite;
-                    case 2:
-                      return Icons.star_rounded;
-                    case 3:
-                      return Icons.pending_actions;
-                    case 4:
-                      return Icons.done;
-                    case 5:
-                      return Icons.heart_broken;
-                    default:
-                      return Icons.favorite_border;
-                  }
-                }(),
+                _getIcon(collectType),
                 color: Colors.white,
               ),
             ),
       itemBuilder: (context) {
-        return const [
-          PopupMenuItem(
-            value: 0,
+        return List.generate(
+          6,
+          (index) => PopupMenuItem(
+            value: index,
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.favorite_border), Text(" 未追")],
+              children: [
+                Icon(_getIcon(index)),
+                Text([
+                  " 未追",
+                  " 在看",
+                  " 想看",
+                  " 搁置",
+                  " 看过",
+                  " 抛弃",
+                ][index])
+              ],
             ),
           ),
-          PopupMenuItem(
-            value: 1,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.favorite), Text(" 在看")],
-            ),
-          ),
-          PopupMenuItem(
-            value: 2,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.star_rounded), Text(" 想看")],
-            ),
-          ),
-          PopupMenuItem(
-            value: 3,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.pending_actions), Text(" 搁置")],
-            ),
-          ),
-          PopupMenuItem(
-            value: 4,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.done), Text(" 看过")],
-            ),
-          ),
-          PopupMenuItem(
-            value: 5,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [Icon(Icons.heart_broken), Text(" 抛弃")],
-            ),
-          ),
-        ];
+        );
       },
       onSelected: (value) {
         if (value != collectType && mounted) {
