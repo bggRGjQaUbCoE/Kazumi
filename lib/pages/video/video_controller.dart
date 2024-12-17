@@ -1,4 +1,5 @@
 import 'package:kazumi/modules/roads/road_module.dart';
+import 'package:kazumi/pages/player/player_controller.dart';
 import 'package:kazumi/plugins/plugins_controller.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/plugins/plugins.dart';
@@ -52,8 +53,11 @@ abstract class _VideoPageController with Store {
 
   final PluginsController pluginsController = Modular.get<PluginsController>();
   final HistoryController historyController = Modular.get<HistoryController>();
+  late final PlayerController playerController = Modular.get<PlayerController>();
 
   Future<void> changeEpisode(int episode, {int currentRoad = 0, int offset = 0}) async {
+    playerController.danmakuOffset = 0;
+
     showDebugLog = false;
     loading = true;
     currentEpisode = episode;
