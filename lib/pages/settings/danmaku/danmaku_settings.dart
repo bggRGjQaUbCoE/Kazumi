@@ -32,7 +32,7 @@ class _DanmakuSettingsPageState extends State<DanmakuSettingsPage> {
     defaultDanmakuOpacity =
         setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
     defaultDanmakuFontSize = setting.get(SettingBoxKey.danmakuFontSize,
-        defaultValue: (Utils.isCompact()) ? 16.0 : 25.0);
+        defaultValue: Utils.isCompact() ? 16.0 : 25.0);
     defaultDanmakuFontWeight =
         setting.get(SettingBoxKey.danmakuFontWeight, defaultValue: 4);
   }

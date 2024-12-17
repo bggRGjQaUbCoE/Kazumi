@@ -118,145 +118,140 @@ class _ThemeSettingsPageState extends State<ThemeSettingsPage> {
             ListTile(
               onTap: () async {
                 final List<Map<String, dynamic>> colorThemes = colorThemeTypes;
-                KazumiDialog.show(
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('配色方案'),
-                        content: StatefulBuilder(builder:
-                            (BuildContext context, StateSetter setState) {
-                          return Wrap(
-                            alignment: WrapAlignment.center,
-                            spacing: 22,
-                            runSpacing: 18,
-                            children: [
-                              ...colorThemes.map(
-                                (e) {
-                                  final index = colorThemes.indexOf(e);
-                                  return GestureDetector(
-                                    onTap: () {
-                                      index == 0
-                                          ? resetTheme()
-                                          : setTheme(e['color']);
-                                      KazumiDialog.dismiss();
-                                    },
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          width: 46,
-                                          height: 46,
-                                          decoration: BoxDecoration(
-                                            color: e['color'].withOpacity(0.8),
-                                            borderRadius:
-                                                BorderRadius.circular(50),
-                                            border: Border.all(
-                                              width: 2,
-                                              color:
-                                                  e['color'].withOpacity(0.8),
-                                            ),
-                                          ),
-                                          child: const AnimatedOpacity(
-                                            opacity: 0,
-                                            duration:
-                                                Duration(milliseconds: 200),
-                                            child: Icon(
-                                              Icons.done,
-                                              color: Colors.black,
-                                              size: 20,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 3),
-                                        Text(
-                                          e['label'],
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .outline,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
+                KazumiDialog.show(builder: (context) {
+                  return AlertDialog(
+                    title: const Text('配色方案'),
+                    content: StatefulBuilder(
+                        builder: (BuildContext context, StateSetter setState) {
+                      return Wrap(
+                        alignment: WrapAlignment.center,
+                        spacing: 22,
+                        runSpacing: 18,
+                        children: [
+                          ...colorThemes.map(
+                            (e) {
+                              final index = colorThemes.indexOf(e);
+                              return GestureDetector(
+                                onTap: () {
+                                  index == 0
+                                      ? resetTheme()
+                                      : setTheme(e['color']);
+                                  KazumiDialog.dismiss();
                                 },
-                              )
-                            ],
-                          );
-                        }),
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      width: 46,
+                                      height: 46,
+                                      decoration: BoxDecoration(
+                                        color:
+                                            e['color'].withValues(alpha: 0.8),
+                                        borderRadius: BorderRadius.circular(50),
+                                        border: Border.all(
+                                          width: 2,
+                                          color:
+                                              e['color'].withValues(alpha: 0.8),
+                                        ),
+                                      ),
+                                      child: const AnimatedOpacity(
+                                        opacity: 0,
+                                        duration: Duration(milliseconds: 200),
+                                        child: Icon(
+                                          Icons.done,
+                                          color: Colors.black,
+                                          size: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 3),
+                                    Text(
+                                      e['label'],
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outline,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          )
+                        ],
                       );
-                    });
+                    }),
+                  );
+                });
               },
               dense: false,
               title: const Text('配色方案'),
             ),
-            Platform.isAndroid
-                ? ListTile(
-                    onTap: () async {
-                      Modular.to.pushNamed('/settings/theme/display');
-                    },
-                    dense: false,
-                    title: const Text('屏幕帧率'),
-                    // trailing: const Icon(Icons.navigate_next),
-                  )
-                : const SizedBox.shrink(),
+            if (Platform.isAndroid)
+              ListTile(
+                onTap: () async {
+                  Modular.to.pushNamed('/settings/theme/display');
+                },
+                dense: false,
+                title: const Text('屏幕帧率'),
+                // trailing: const Icon(Icons.navigate_next),
+              ),
             ListTile(
               onTap: () {
-                KazumiDialog.show(
-                    builder: (context) {
-                      return AlertDialog(
-                        title: const Text('主题模式'),
-                        content: StatefulBuilder(
-                          builder:
-                              (BuildContext context, StateSetter setState) {
-                            return Wrap(
-                              spacing: 8,
-                              runSpacing: 2,
-                              children: [
-                                defaultThemeMode == 'system'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('system');
-                                          KazumiDialog.dismiss();
-                                        },
-                                        child: const Text("跟随系统"))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('system');
-                                          KazumiDialog.dismiss();
-                                        },
-                                        child: const Text("跟随系统")),
-                                defaultThemeMode == 'light'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('light');
-                                          KazumiDialog.dismiss();
-                                        },
-                                        child: const Text("浅色"))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('light');
-                                          KazumiDialog.dismiss();
-                                        },
-                                        child: const Text("浅色")),
-                                defaultThemeMode == 'dark'
-                                    ? FilledButton(
-                                        onPressed: () {
-                                          updateTheme('dark');
-                                          KazumiDialog.dismiss();
-                                        },
-                                        child: const Text("深色"))
-                                    : FilledButton.tonal(
-                                        onPressed: () {
-                                          updateTheme('dark');
-                                          KazumiDialog.dismiss();
-                                        },
-                                        child: const Text("深色")),
-                              ],
-                            );
-                          },
-                        ),
-                      );
-                    });
+                KazumiDialog.show(builder: (context) {
+                  return AlertDialog(
+                    title: const Text('主题模式'),
+                    content: StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                        return Wrap(
+                          spacing: 8,
+                          runSpacing: 2,
+                          children: [
+                            defaultThemeMode == 'system'
+                                ? FilledButton(
+                                    onPressed: () {
+                                      updateTheme('system');
+                                      KazumiDialog.dismiss();
+                                    },
+                                    child: const Text("跟随系统"))
+                                : FilledButton.tonal(
+                                    onPressed: () {
+                                      updateTheme('system');
+                                      KazumiDialog.dismiss();
+                                    },
+                                    child: const Text("跟随系统")),
+                            defaultThemeMode == 'light'
+                                ? FilledButton(
+                                    onPressed: () {
+                                      updateTheme('light');
+                                      KazumiDialog.dismiss();
+                                    },
+                                    child: const Text("浅色"))
+                                : FilledButton.tonal(
+                                    onPressed: () {
+                                      updateTheme('light');
+                                      KazumiDialog.dismiss();
+                                    },
+                                    child: const Text("浅色")),
+                            defaultThemeMode == 'dark'
+                                ? FilledButton(
+                                    onPressed: () {
+                                      updateTheme('dark');
+                                      KazumiDialog.dismiss();
+                                    },
+                                    child: const Text("深色"))
+                                : FilledButton.tonal(
+                                    onPressed: () {
+                                      updateTheme('dark');
+                                      KazumiDialog.dismiss();
+                                    },
+                                    child: const Text("深色")),
+                          ],
+                        );
+                      },
+                    ),
+                  );
+                });
               },
               dense: false,
               title: const Text('主题模式'),

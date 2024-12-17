@@ -277,27 +277,26 @@ class _VideoPageState extends State<VideoPage>
         Positioned.fill(
           child: Stack(
             children: [
-              Positioned.fill(
-                child: (videoPageController.currentPlugin.useNativePlayer &&
-                        playerController.loading)
-                    ? Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CircularProgressIndicator(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .tertiaryContainer),
-                            const SizedBox(height: 10),
-                            const Text('视频资源解析成功, 播放器加载中',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                )),
-                          ],
-                        ),
-                      )
-                    : const SizedBox.shrink(),
-              ),
+              if (videoPageController.currentPlugin.useNativePlayer &&
+                  playerController.loading)
+                Positioned.fill(
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                            color: Theme.of(context)
+                                .colorScheme
+                                .tertiaryContainer),
+                        const SizedBox(height: 10),
+                        const Text('视频资源解析成功, 播放器加载中',
+                            style: TextStyle(
+                              color: Colors.white,
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
               Visibility(
                 visible: videoPageController.loading,
                 child: Container(
@@ -349,309 +348,299 @@ class _VideoPageState extends State<VideoPage>
                   ),
                 ),
               ),
-              ((videoPageController.currentPlugin.useNativePlayer ||
-                      videoPageController.isFullscreen))
-                  ? Stack(
-                      children: [
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          child: Row(
+              if (videoPageController.currentPlugin.useNativePlayer ||
+                  videoPageController.isFullscreen)
+                Stack(
+                  children: [
+                    Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: const Icon(Icons.arrow_back,
+                                color: Colors.white),
+                            onPressed: () {
+                              if (videoPageController.isFullscreen == true &&
+                                  !Utils.isTablet()) {
+                                Utils.exitFullScreen();
+                                menuJumpToCurrentEpisode();
+                                videoPageController.isFullscreen = false;
+                                return;
+                              }
+                              if (videoPageController.isFullscreen == true) {
+                                Utils.exitFullScreen();
+                                videoPageController.isFullscreen = false;
+                              }
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                          const Expanded(
+                              child: dtb.DragToMoveArea(
+                                  child: SizedBox(height: 40))),
+                          IconButton(
+                            icon: const Icon(Icons.refresh_outlined,
+                                color: Colors.white),
+                            onPressed: () {
+                              videoPageController.changeEpisode(
+                                  videoPageController.currentEpisode,
+                                  currentRoad: videoPageController.currentRoad);
+                            },
+                          ),
+                          Visibility(
+                              visible: Utils.isDesktop() || Utils.isTablet(),
+                              child: IconButton(
+                                  onPressed: () {
+                                    videoPageController.showTabBody =
+                                        !videoPageController.showTabBody;
+                                    openTabBodyAnimated();
+                                  },
+                                  icon: Icon(
+                                    videoPageController.showTabBody
+                                        ? Icons.menu_open
+                                        : Icons.menu_open_outlined,
+                                    color: Colors.white,
+                                  ))),
+                          IconButton(
+                            icon: Icon(
+                                videoPageController.showDebugLog
+                                    ? Icons.bug_report
+                                    : Icons.bug_report_outlined,
+                                color: Colors.white),
+                            onPressed: () {
+                              showDebugConsole();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+        if (!(!videoPageController.currentPlugin.useNativePlayer ||
+            playerController.loading))
+          Positioned.fill(
+            child: PlayerItem(
+              openMenu: openTabBodyAnimated,
+              locateEpisode: menuJumpToCurrentEpisode,
+              handleFullscreen: () {
+                if (_bottomSheetController != null) {
+                  _bottomSheetController?.close();
+                  _bottomSheetController = null;
+                }
+              },
+              handleBack: () {
+                if (_bottomSheetController != null) {
+                  _bottomSheetController?.close();
+                  _bottomSheetController = null;
+                  return true;
+                }
+                return false;
+              },
+              showComment: () {
+                // bool needRestart = playerController.playing;
+                // playerController.pause();
+                dynamic episodeNum = Utils.extractEpisodeNumber(
+                    videoPageController
+                        .roadList[videoPageController.currentRoad]
+                        .identifier[videoPageController.currentEpisode - 1]);
+                if (episodeNum == 0 ||
+                    episodeNum >
+                        videoPageController
+                            .roadList[videoPageController.currentRoad]
+                            .identifier
+                            .length) {
+                  episodeNum = videoPageController.currentEpisode;
+                }
+                _bottomSheetController = _key.currentState?.showBottomSheet(
+                  (context) {
+                    return EpisodeCommentsSheet(
+                      episode: episodeNum,
+                    );
+                    // return DraggableScrollableSheet(
+                    //   expand: false,
+                    //   snap: true,
+                    //   minChildSize: 0,
+                    //   maxChildSize: 1,
+                    //   initialChildSize: 1,
+                    //   snapSizes: const [1],
+                    //   builder: (context, scrollController) {
+                    //     return EpisodeCommentsSheet(
+                    //       episode: episodeNum,
+                    //       scrollController: scrollController,
+                    //     );
+                    //   },
+                    // );
+                  },
+                  elevation: 0,
+                  backgroundColor: Colors.transparent,
+                  enableDrag: true,
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  constraints: BoxConstraints(
+                      maxHeight: MediaQuery.of(context).size.height >
+                              MediaQuery.of(context).size.width
+                          ? MediaQuery.of(context).size.height -
+                              MediaQuery.of(context).size.width * 9 / 16 -
+                              MediaQuery.paddingOf(context).top
+                          : MediaQuery.of(context).size.height,
+                      maxWidth: MediaQuery.of(context).size.width >
+                              MediaQuery.of(context).size.height
+                          ? MediaQuery.of(context).size.width * 9 / 16
+                          : MediaQuery.of(context).size.width),
+                  clipBehavior: Clip.antiAlias,
+                );
+                //.whenComplete(() {
+                // if (needRestart) {
+                //   playerController.play();
+                // }
+                // _focusNode.requestFocus();
+                // });
+              },
+              showDanmakuOffsetSheet: () {
+                _bottomSheetController = _key.currentState?.showBottomSheet(
+                  (context) {
+                    Map<int, List<Danmaku>> oriDanDanmakus = {};
+                    if (playerController.danmakuOffset != 0) {
+                      playerController.danDanmakus.forEach((key, value) {
+                        oriDanDanmakus[key + playerController.danmakuOffset] =
+                            value;
+                      });
+                    } else {
+                      oriDanDanmakus = playerController.danDanmakus;
+                    }
+
+                    String getLabel() => playerController.danmakuOffset == 0
+                        ? '不变'
+                        : '${playerController.danmakuOffset < 0 ? '慢' : '快'}${playerController.danmakuOffset.abs()}秒';
+
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        void onChanged(int value) {
+                          playerController.danmakuOffset = value;
+                          setState(() {});
+                          Map<int, List<Danmaku>> danDanmakus = {};
+                          oriDanDanmakus.forEach((key, value) {
+                            danDanmakus[key - playerController.danmakuOffset] =
+                                value;
+                          });
+                          playerController.danmakuController.clear();
+                          playerController.danDanmakus = danDanmakus;
+                        }
+
+                        return Scaffold(
+                          resizeToAvoidBottomInset: false,
+                          appBar: AppBar(
+                            automaticallyImplyLeading: false,
+                            title: const Text(
+                              '弹幕时间轴调整',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            actions: [
+                              IconButton(
+                                tooltip: '编辑调整',
+                                onPressed: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      String initialValue = playerController
+                                          .danmakuOffset
+                                          .toString();
+                                      return AlertDialog(
+                                        content: TextFormField(
+                                          initialValue: initialValue,
+                                          autofocus: true,
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions(signed: true),
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.allow(
+                                                RegExp(r'[-\d+]')),
+                                          ],
+                                          onChanged: (value) {
+                                            initialValue = value;
+                                          },
+                                          decoration: const InputDecoration(
+                                            suffixText: 's',
+                                          ),
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.pop(context),
+                                            child: Text(
+                                              '取消',
+                                              style: TextStyle(
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .outline),
+                                            ),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              onChanged(
+                                                  int.tryParse(initialValue) ??
+                                                      0);
+                                            },
+                                            child: const Text('确定'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                                icon: const Icon(Icons.edit),
+                              ),
+                              IconButton(
+                                tooltip: '关闭',
+                                onPressed: () => Navigator.pop(context),
+                                icon: const Icon(Icons.clear),
+                              ),
+                              const SizedBox(width: 16),
+                            ],
+                          ),
+                          body: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              IconButton(
-                                icon: const Icon(Icons.arrow_back,
-                                    color: Colors.white),
-                                onPressed: () {
-                                  if (videoPageController.isFullscreen ==
-                                          true &&
-                                      !Utils.isTablet()) {
-                                    Utils.exitFullScreen();
-                                    menuJumpToCurrentEpisode();
-                                    videoPageController.isFullscreen = false;
-                                    return;
-                                  }
-                                  if (videoPageController.isFullscreen ==
-                                      true) {
-                                    Utils.exitFullScreen();
-                                    videoPageController.isFullscreen = false;
-                                  }
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              const Expanded(
-                                  child: dtb.DragToMoveArea(
-                                      child: SizedBox(height: 40))),
-                              IconButton(
-                                icon: const Icon(Icons.refresh_outlined,
-                                    color: Colors.white),
-                                onPressed: () {
-                                  videoPageController.changeEpisode(
-                                      videoPageController.currentEpisode,
-                                      currentRoad:
-                                          videoPageController.currentRoad);
-                                },
-                              ),
-                              Visibility(
-                                  visible:
-                                      Utils.isDesktop() || Utils.isTablet(),
-                                  child: IconButton(
-                                      onPressed: () {
-                                        videoPageController.showTabBody =
-                                            !videoPageController.showTabBody;
-                                        openTabBodyAnimated();
-                                      },
-                                      icon: Icon(
-                                        videoPageController.showTabBody
-                                            ? Icons.menu_open
-                                            : Icons.menu_open_outlined,
-                                        color: Colors.white,
-                                      ))),
-                              IconButton(
-                                icon: Icon(
-                                    videoPageController.showDebugLog
-                                        ? Icons.bug_report
-                                        : Icons.bug_report_outlined,
-                                    color: Colors.white),
-                                onPressed: () {
-                                  showDebugConsole();
+                              Text(getLabel()),
+                              Slider(
+                                value:
+                                    playerController.danmakuOffset.toDouble(),
+                                min: -15,
+                                max: 15,
+                                divisions: 30,
+                                label: getLabel(),
+                                onChanged: (value) {
+                                  onChanged(value.round());
                                 },
                               ),
                             ],
                           ),
-                        ),
-                      ],
-                    )
-                  : const SizedBox.shrink(),
-            ],
-          ),
-        ),
-        Positioned.fill(
-          child: (!videoPageController.currentPlugin.useNativePlayer ||
-                  playerController.loading)
-              ? const SizedBox.shrink()
-              : PlayerItem(
-                  openMenu: openTabBodyAnimated,
-                  locateEpisode: menuJumpToCurrentEpisode,
-                  handleFullscreen: () {
-                    if (_bottomSheetController != null) {
-                      _bottomSheetController?.close();
-                      _bottomSheetController = null;
-                    }
-                  },
-                  handleBack: () {
-                    if (_bottomSheetController != null) {
-                      _bottomSheetController?.close();
-                      _bottomSheetController = null;
-                      return true;
-                    }
-                    return false;
-                  },
-                  showComment: () {
-                    // bool needRestart = playerController.playing;
-                    // playerController.pause();
-                    dynamic episodeNum = Utils.extractEpisodeNumber(
-                        videoPageController
-                                .roadList[videoPageController.currentRoad]
-                                .identifier[
-                            videoPageController.currentEpisode - 1]);
-                    if (episodeNum == 0 ||
-                        episodeNum >
-                            videoPageController
-                                .roadList[videoPageController.currentRoad]
-                                .identifier
-                                .length) {
-                      episodeNum = videoPageController.currentEpisode;
-                    }
-                    _bottomSheetController = _key.currentState?.showBottomSheet(
-                      (context) {
-                        return EpisodeCommentsSheet(
-                          episode: episodeNum,
                         );
-                        // return DraggableScrollableSheet(
-                        //   expand: false,
-                        //   snap: true,
-                        //   minChildSize: 0,
-                        //   maxChildSize: 1,
-                        //   initialChildSize: 1,
-                        //   snapSizes: const [1],
-                        //   builder: (context, scrollController) {
-                        //     return EpisodeCommentsSheet(
-                        //       episode: episodeNum,
-                        //       scrollController: scrollController,
-                        //     );
-                        //   },
-                        // );
                       },
-                      elevation: 0,
-                      backgroundColor: Colors.transparent,
-                      enableDrag: true,
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.zero,
-                      ),
-                      constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height >
+                    );
+                  },
+                  constraints: BoxConstraints(
+                      maxHeight: videoPageController.isFullscreen
+                          ? MediaQuery.of(context).size.height / 2
+                          : MediaQuery.of(context).size.height >
                                   MediaQuery.of(context).size.width
                               ? MediaQuery.of(context).size.height -
                                   MediaQuery.of(context).size.width * 9 / 16 -
                                   MediaQuery.paddingOf(context).top
                               : MediaQuery.of(context).size.height,
-                          maxWidth: MediaQuery.of(context).size.width >
-                                  MediaQuery.of(context).size.height
-                              ? MediaQuery.of(context).size.width * 9 / 16
-                              : MediaQuery.of(context).size.width),
-                      clipBehavior: Clip.antiAlias,
-                    );
-                    //.whenComplete(() {
-                    // if (needRestart) {
-                    //   playerController.play();
-                    // }
-                    // _focusNode.requestFocus();
-                    // });
-                  },
-                  showDanmakuOffsetSheet: () {
-                    _bottomSheetController = _key.currentState?.showBottomSheet(
-                      (context) {
-                        Map<int, List<Danmaku>> oriDanDanmakus = {};
-                        if (playerController.danmakuOffset != 0) {
-                          playerController.danDanmakus.forEach((key, value) {
-                            oriDanDanmakus[
-                                key + playerController.danmakuOffset] = value;
-                          });
-                        } else {
-                          oriDanDanmakus = playerController.danDanmakus;
-                        }
-
-                        String getLabel() => playerController.danmakuOffset == 0
-                            ? '不变'
-                            : '${playerController.danmakuOffset < 0 ? '慢' : '快'}${playerController.danmakuOffset.abs()}秒';
-
-                        return StatefulBuilder(
-                          builder: (context, setState) {
-                            void onChanged(int value) {
-                              playerController.danmakuOffset = value;
-                              setState(() {});
-                              Map<int, List<Danmaku>> danDanmakus = {};
-                              oriDanDanmakus.forEach((key, value) {
-                                danDanmakus[key -
-                                    playerController.danmakuOffset] = value;
-                              });
-                              playerController.danmakuController.clear();
-                              playerController.danDanmakus = danDanmakus;
-                            }
-
-                            return Scaffold(
-                              resizeToAvoidBottomInset: false,
-                              appBar: AppBar(
-                                automaticallyImplyLeading: false,
-                                title: const Text(
-                                  '弹幕时间轴调整',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                actions: [
-                                  IconButton(
-                                    tooltip: '编辑调整',
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          String initialValue = playerController
-                                              .danmakuOffset
-                                              .toString();
-                                          return AlertDialog(
-                                            content: TextFormField(
-                                              initialValue: initialValue,
-                                              autofocus: true,
-                                              keyboardType: const TextInputType
-                                                  .numberWithOptions(
-                                                  signed: true),
-                                              inputFormatters: [
-                                                FilteringTextInputFormatter
-                                                    .allow(RegExp(r'[-\d+]')),
-                                              ],
-                                              onChanged: (value) {
-                                                initialValue = value;
-                                              },
-                                              decoration: const InputDecoration(
-                                                suffixText: 's',
-                                              ),
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: Text(
-                                                  '取消',
-                                                  style: TextStyle(
-                                                      color: Theme.of(context)
-                                                          .colorScheme
-                                                          .outline),
-                                                ),
-                                              ),
-                                              TextButton(
-                                                onPressed: () {
-                                                  Navigator.pop(context);
-                                                  onChanged(int.tryParse(
-                                                          initialValue) ??
-                                                      0);
-                                                },
-                                                child: const Text('确定'),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    icon: const Icon(Icons.edit),
-                                  ),
-                                  IconButton(
-                                    tooltip: '关闭',
-                                    onPressed: () => Navigator.pop(context),
-                                    icon: const Icon(Icons.clear),
-                                  ),
-                                  const SizedBox(width: 16),
-                                ],
-                              ),
-                              body: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(getLabel()),
-                                  Slider(
-                                    value: playerController.danmakuOffset
-                                        .toDouble(),
-                                    min: -15,
-                                    max: 15,
-                                    divisions: 30,
-                                    label: getLabel(),
-                                    onChanged: (value) {
-                                      onChanged(value.round());
-                                    },
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      constraints: BoxConstraints(
-                          maxHeight: videoPageController.isFullscreen
-                              ? MediaQuery.of(context).size.height / 2
-                              : MediaQuery.of(context).size.height >
-                                      MediaQuery.of(context).size.width
-                                  ? MediaQuery.of(context).size.height -
-                                      MediaQuery.of(context).size.width *
-                                          9 /
-                                          16 -
-                                      MediaQuery.paddingOf(context).top
-                                  : MediaQuery.of(context).size.height,
-                          maxWidth: MediaQuery.of(context).size.width >
-                                  MediaQuery.of(context).size.height
-                              ? MediaQuery.of(context).size.width * 9 / 16
-                              : MediaQuery.of(context).size.width),
-                    );
-                  },
-                ),
-        ),
+                      maxWidth: MediaQuery.of(context).size.width >
+                              MediaQuery.of(context).size.height
+                          ? MediaQuery.of(context).size.width * 9 / 16
+                          : MediaQuery.of(context).size.width),
+                );
+              },
+            ),
+          ),
 
         /// workaround for webview_windows
         /// The webview_windows component cannot be removed from the widget tree; otherwise, it can never be reinitialized.

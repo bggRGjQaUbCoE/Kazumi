@@ -87,9 +87,7 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                       ],
                     ),
                   ),
-                  Utils.isCompact()
-                      ? const SizedBox.shrink()
-                      : const SizedBox(height: 10),
+                  if (!Utils.isCompact()) const SizedBox(height: 10),
                   Row(
                     children: [
                       FilledButton.tonal(
@@ -121,30 +119,25 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                         child:
                             Text('#${widget.bangumiItem.rank}', style: style),
                       ),
-                      Utils.isCompact()
-                          ? const SizedBox.shrink()
-                          : const SizedBox(width: 7),
-                      Utils.isCompact()
-                          ? const SizedBox.shrink()
-                          : FilledButton.tonal(
-                              onPressed: () {},
-                              style: OutlinedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                side: const BorderSide(
-                                    // width: 2,
-                                    ),
-                                backgroundColor: Colors.transparent,
-                              ),
-                              child: Text(widget.bangumiItem.airDate,
-                                  style: style),
+                      if (!Utils.isCompact()) ...[
+                        const SizedBox(width: 7),
+                        FilledButton.tonal(
+                          onPressed: () {},
+                          style: OutlinedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
                             ),
+                            side: const BorderSide(
+                                // width: 2,
+                                ),
+                            backgroundColor: Colors.transparent,
+                          ),
+                          child: Text(widget.bangumiItem.airDate, style: style),
+                        ),
+                      ],
                     ],
                   ),
-                  Utils.isCompact()
-                      ? const SizedBox.shrink()
-                      : const SizedBox(height: 10),
+                  if (!Utils.isCompact()) const SizedBox(height: 10),
                   Expanded(
                       child: SingleChildScrollView(
                     child: Text(widget.bangumiItem.summary,

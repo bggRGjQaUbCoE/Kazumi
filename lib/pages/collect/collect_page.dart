@@ -146,16 +146,16 @@ class _CollectPageState extends State<CollectPage>
                                     .bangumiItem,
                                 canTap: !showDelete,
                               ),
-                              Positioned(
-                                right: 5,
-                                bottom: 5,
-                                child: showDelete
-                                    ? CollectButton(
-                                        bangumiItem:
-                                            collectedBangumiRenderItem[index]
-                                                .bangumiItem)
-                                    : const SizedBox.shrink(),
-                              ),
+                              if (showDelete)
+                                Positioned(
+                                  right: 5,
+                                  bottom: 5,
+                                  child: CollectButton(
+                                    bangumiItem:
+                                        collectedBangumiRenderItem[index]
+                                            .bangumiItem,
+                                  ),
+                                ),
                             ],
                           );
                         },

@@ -753,7 +753,7 @@ class _PlayerItemState extends State<PlayerItem>
     _opacity = setting.get(SettingBoxKey.danmakuOpacity, defaultValue: 1.0);
     _duration = 8;
     _fontSize = setting.get(SettingBoxKey.danmakuFontSize,
-        defaultValue: (Utils.isCompact()) ? 16.0 : 25.0);
+        defaultValue: Utils.isCompact() ? 16.0 : 25.0);
     danmakuArea = setting.get(SettingBoxKey.danmakuArea, defaultValue: 1.0);
     _hideTop = !setting.get(SettingBoxKey.danmakuTop, defaultValue: true);
     _hideBottom =
@@ -973,14 +973,13 @@ class _PlayerItemState extends State<PlayerItem>
                                 return KeyEventResult.handled;
                               },
                               child: playerSurface)),
-                      (playerController.isBuffering ||
-                              videoPageController.loading)
-                          ? const Positioned.fill(
-                              child: Center(
-                                child: CircularProgressIndicator(),
-                              ),
-                            )
-                          : const SizedBox.shrink(),
+                      if (playerController.isBuffering ||
+                          videoPageController.loading)
+                        const Positioned.fill(
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
                       GestureDetector(
                         onTap: () {
                           _handleTap();
@@ -1041,7 +1040,7 @@ class _PlayerItemState extends State<PlayerItem>
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: [
-                                    Colors.black.withOpacity(0.9),
+                                    Colors.black.withValues(alpha: 0.9),
                                     Colors.transparent,
                                   ],
                                 ),
@@ -1069,7 +1068,7 @@ class _PlayerItemState extends State<PlayerItem>
                                   end: Alignment.bottomCenter,
                                   colors: [
                                     Colors.transparent,
-                                    Colors.black.withOpacity(0.9),
+                                    Colors.black.withValues(alpha: 0.9),
                                   ],
                                 ),
                               ),
@@ -1079,224 +1078,215 @@ class _PlayerItemState extends State<PlayerItem>
                       ),
 
                       // 播放器手势控制
-                      Positioned.fill(
-                          left: 16,
-                          top: 25,
-                          right: 15,
-                          bottom: 15,
-                          child: (Utils.isDesktop() || lockPanel)
-                              ? const SizedBox.shrink()
-                              : GestureDetector(onHorizontalDragUpdate:
-                                  (DragUpdateDetails details) {
-                                  setState(() {
-                                    showPosition = true;
-                                  });
-                                  if (playerTimer != null) {
-                                    playerTimer!.cancel();
-                                  }
-                                  playerController.pause();
-                                  final double scale =
-                                      180000 / MediaQuery.sizeOf(context).width;
-                                  playerController.currentPosition = Duration(
-                                      milliseconds: playerController
-                                                      .currentPosition
-                                                      .inMilliseconds +
-                                                  (details.delta.dx * scale)
-                                                      .round() <
-                                              0
-                                          ? 0
-                                          : playerController.currentPosition
+                      if (!(Utils.isDesktop() || lockPanel))
+                        Positioned.fill(
+                            left: 16,
+                            top: 25,
+                            right: 15,
+                            bottom: 15,
+                            child: GestureDetector(onHorizontalDragUpdate:
+                                (DragUpdateDetails details) {
+                              setState(() {
+                                showPosition = true;
+                              });
+                              if (playerTimer != null) {
+                                playerTimer!.cancel();
+                              }
+                              playerController.pause();
+                              final double scale =
+                                  180000 / MediaQuery.sizeOf(context).width;
+                              playerController.currentPosition = Duration(
+                                  milliseconds: playerController.currentPosition
                                                   .inMilliseconds +
                                               (details.delta.dx * scale)
-                                                  .round());
-                                }, onHorizontalDragEnd:
-                                  (DragEndDetails details) {
-                                  playerController.play();
-                                  playerController
-                                      .seek(playerController.currentPosition);
-                                  playerTimer = getPlayerTimer();
-                                  setState(() {
-                                    showPosition = false;
-                                  });
-                                }, onVerticalDragUpdate:
-                                  (DragUpdateDetails details) async {
-                                  final double totalWidth =
-                                      MediaQuery.sizeOf(context).width;
-                                  final double totalHeight =
-                                      MediaQuery.sizeOf(context).height;
-                                  final double tapPosition =
-                                      details.localPosition.dx;
-                                  final double sectionWidth = totalWidth / 2;
-                                  final double delta = details.delta.dy;
+                                                  .round() <
+                                          0
+                                      ? 0
+                                      : playerController
+                                              .currentPosition.inMilliseconds +
+                                          (details.delta.dx * scale).round());
+                            }, onHorizontalDragEnd: (DragEndDetails details) {
+                              playerController.play();
+                              playerController
+                                  .seek(playerController.currentPosition);
+                              playerTimer = getPlayerTimer();
+                              setState(() {
+                                showPosition = false;
+                              });
+                            }, onVerticalDragUpdate:
+                                (DragUpdateDetails details) async {
+                              final double totalWidth =
+                                  MediaQuery.sizeOf(context).width;
+                              final double totalHeight =
+                                  MediaQuery.sizeOf(context).height;
+                              final double tapPosition =
+                                  details.localPosition.dx;
+                              final double sectionWidth = totalWidth / 2;
+                              final double delta = details.delta.dy;
 
-                                  /// 非全屏时禁用
-                                  if (!videoPageController.isFullscreen) {
-                                    return;
-                                  }
-                                  if (tapPosition < sectionWidth) {
-                                    // 左边区域
-                                    brightnessSeeking = true;
-                                    setState(() {
-                                      showBrightness = true;
-                                    });
-                                    final double level = (totalHeight) * 2;
-                                    final double brightness =
-                                        playerController.brightness -
-                                            delta / level;
-                                    final double result =
-                                        brightness.clamp(0.0, 1.0);
-                                    setBrightness(result);
-                                    playerController.brightness = result;
-                                  } else {
-                                    // 右边区域
-                                    volumeSeeking = true;
-                                    setState(() {
-                                      showVolume = true;
-                                    });
-                                    final double level = (totalHeight) * 0.03;
-                                    final double volume =
-                                        playerController.volume - delta / level;
-                                    final double result =
-                                        volume.clamp(0.0, 100.0);
-                                    setVolume(result);
-                                    playerController.volume = result;
-                                  }
-                                }, onVerticalDragEnd: (DragEndDetails details) {
-                                  if (volumeSeeking) {
-                                    volumeSeeking = false;
-                                    Future.delayed(const Duration(seconds: 1),
-                                        () {
-                                      FlutterVolumeController
-                                          .updateShowSystemUI(true);
-                                    });
-                                  }
-                                  if (brightnessSeeking) {
-                                    brightnessSeeking = false;
-                                  }
-                                  setState(() {
-                                    showVolume = false;
-                                    showBrightness = false;
-                                  });
-                                })),
+                              /// 非全屏时禁用
+                              if (!videoPageController.isFullscreen) {
+                                return;
+                              }
+                              if (tapPosition < sectionWidth) {
+                                // 左边区域
+                                brightnessSeeking = true;
+                                setState(() {
+                                  showBrightness = true;
+                                });
+                                final double level = (totalHeight) * 2;
+                                final double brightness =
+                                    playerController.brightness - delta / level;
+                                final double result =
+                                    brightness.clamp(0.0, 1.0);
+                                setBrightness(result);
+                                playerController.brightness = result;
+                              } else {
+                                // 右边区域
+                                volumeSeeking = true;
+                                setState(() {
+                                  showVolume = true;
+                                });
+                                final double level = (totalHeight) * 0.03;
+                                final double volume =
+                                    playerController.volume - delta / level;
+                                final double result = volume.clamp(0.0, 100.0);
+                                setVolume(result);
+                                playerController.volume = result;
+                              }
+                            }, onVerticalDragEnd: (DragEndDetails details) {
+                              if (volumeSeeking) {
+                                volumeSeeking = false;
+                                Future.delayed(const Duration(seconds: 1), () {
+                                  FlutterVolumeController.updateShowSystemUI(
+                                      true);
+                                });
+                              }
+                              if (brightnessSeeking) {
+                                brightnessSeeking = false;
+                              }
+                              setState(() {
+                                showVolume = false;
+                                showBrightness = false;
+                              });
+                            })),
                       // 顶部进度条
-                      Positioned(
+                      if (showPosition)
+                        Positioned(
                           top: 25,
-                          child: showPosition
-                              ? Wrap(
-                                  alignment: WrapAlignment.center,
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.5),
+                                  borderRadius:
+                                      BorderRadius.circular(8.0), // 圆角
+                                ),
+                                child: Text(
+                                  playerController.currentPosition.compareTo(
+                                              playerController
+                                                  .mediaPlayer.state.position) >
+                                          0
+                                      ? '快进 ${playerController.currentPosition.inSeconds - playerController.mediaPlayer.state.position.inSeconds} 秒'
+                                      : '快退 ${playerController.mediaPlayer.state.position.inSeconds - playerController.currentPosition.inSeconds} 秒',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      // 顶部播放速度条
+                      if (showPlaySpeed)
+                        Positioned(
+                          top: 25,
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                padding: const EdgeInsets.all(8.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.5),
+                                  borderRadius:
+                                      BorderRadius.circular(8.0), // 圆角
+                                ),
+                                child: const Row(
                                   children: <Widget>[
-                                    Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0), // 圆角
+                                    Icon(Icons.fast_forward,
+                                        color: Colors.white),
+                                    Text(
+                                      ' 倍速播放',
+                                      style: TextStyle(
+                                        color: Colors.white,
                                       ),
-                                      child: Text(
-                                        playerController.currentPosition
-                                                    .compareTo(playerController
-                                                        .mediaPlayer
-                                                        .state
-                                                        .position) >
-                                                0
-                                            ? '快进 ${playerController.currentPosition.inSeconds - playerController.mediaPlayer.state.position.inSeconds} 秒'
-                                            : '快退 ${playerController.mediaPlayer.state.position.inSeconds - playerController.currentPosition.inSeconds} 秒',
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      // 亮度条
+                      if (showBrightness)
+                        Positioned(
+                          top: 25,
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    borderRadius:
+                                        BorderRadius.circular(8.0), // 圆角
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const Icon(Icons.brightness_7,
+                                          color: Colors.white),
+                                      Text(
+                                        ' ${(playerController.brightness * 100).toInt()} %',
                                         style: const TextStyle(
                                           color: Colors.white,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                )
-                              : const SizedBox.shrink()),
-                      // 顶部播放速度条
-                      Positioned(
-                          top: 25,
-                          child: showPlaySpeed
-                              ? Wrap(
-                                  alignment: WrapAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                      padding: const EdgeInsets.all(8.0),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.5),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0), // 圆角
-                                      ),
-                                      child: const Row(
-                                        children: <Widget>[
-                                          Icon(Icons.fast_forward,
-                                              color: Colors.white),
-                                          Text(
-                                            ' 倍速播放',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : const SizedBox.shrink()),
-                      // 亮度条
-                      Positioned(
-                          top: 25,
-                          child: showBrightness
-                              ? Wrap(
-                                  alignment: WrapAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.5),
-                                          borderRadius:
-                                              BorderRadius.circular(8.0), // 圆角
-                                        ),
-                                        child: Row(
-                                          children: <Widget>[
-                                            const Icon(Icons.brightness_7,
-                                                color: Colors.white),
-                                            Text(
-                                              ' ${(playerController.brightness * 100).toInt()} %',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        )),
-                                  ],
-                                )
-                              : const SizedBox.shrink()),
+                                    ],
+                                  )),
+                            ],
+                          ),
+                        ),
                       // 音量条
-                      Positioned(
+                      if (showVolume)
+                        Positioned(
                           top: 25,
-                          child: showVolume
-                              ? Wrap(
-                                  alignment: WrapAlignment.center,
-                                  children: <Widget>[
-                                    Container(
-                                        padding: const EdgeInsets.all(8.0),
-                                        decoration: BoxDecoration(
-                                          color: Colors.black.withOpacity(0.5),
-                                          borderRadius:
-                                              BorderRadius.circular(8.0), // 圆角
+                          child: Wrap(
+                            alignment: WrapAlignment.center,
+                            children: <Widget>[
+                              Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  decoration: BoxDecoration(
+                                    color: Colors.black.withValues(alpha: 0.5),
+                                    borderRadius:
+                                        BorderRadius.circular(8.0), // 圆角
+                                  ),
+                                  child: Row(
+                                    children: <Widget>[
+                                      const Icon(Icons.volume_down,
+                                          color: Colors.white),
+                                      Text(
+                                        ' ${playerController.volume.toInt()}%',
+                                        style: const TextStyle(
+                                          color: Colors.white,
                                         ),
-                                        child: Row(
-                                          children: <Widget>[
-                                            const Icon(Icons.volume_down,
-                                                color: Colors.white),
-                                            Text(
-                                              ' ${playerController.volume.toInt()}%',
-                                              style: const TextStyle(
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ],
-                                        )),
-                                  ],
-                                )
-                              : const SizedBox.shrink()),
+                                      ),
+                                    ],
+                                  )),
+                            ],
+                          ),
+                        ),
                       // 弹幕面板
                       Positioned(
                         top: 0,
@@ -1328,44 +1318,43 @@ class _PlayerItemState extends State<PlayerItem>
                       ),
 
                       // 右侧锁定按钮
-                      (Utils.isDesktop() || !videoPageController.isFullscreen)
-                          ? const SizedBox.shrink()
-                          : Positioned(
-                              right: 0,
-                              top: 0,
-                              bottom: 0,
-                              child: SlideTransition(
-                                position: _leftOffsetAnimation,
-                                child: Column(children: [
-                                  const Spacer(),
-                                  (lockPanel)
-                                      ? const SizedBox.shrink()
-                                      : IconButton(
-                                          icon: const Icon(
-                                            Icons.photo_camera_outlined,
-                                            color: Colors.white,
-                                          ),
-                                          onPressed: () {
-                                            _handleScreenshot();
-                                          },
-                                        ),
-                                  IconButton(
-                                    icon: Icon(
-                                      lockPanel
-                                          ? Icons.lock_outline
-                                          : Icons.lock_open,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () {
-                                      setState(() {
-                                        lockPanel = !lockPanel;
-                                      });
-                                    },
+                      if (!(Utils.isDesktop() ||
+                          !videoPageController.isFullscreen))
+                        Positioned(
+                          right: 0,
+                          top: 0,
+                          bottom: 0,
+                          child: SlideTransition(
+                            position: _leftOffsetAnimation,
+                            child: Column(children: [
+                              const Spacer(),
+                              if (!lockPanel)
+                                IconButton(
+                                  icon: const Icon(
+                                    Icons.photo_camera_outlined,
+                                    color: Colors.white,
                                   ),
-                                  const Spacer(),
-                                ]),
+                                  onPressed: () {
+                                    _handleScreenshot();
+                                  },
+                                ),
+                              IconButton(
+                                icon: Icon(
+                                  lockPanel
+                                      ? Icons.lock_outline
+                                      : Icons.lock_open,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    lockPanel = !lockPanel;
+                                  });
+                                },
                               ),
-                            ),
+                              const Spacer(),
+                            ]),
+                          ),
+                        ),
 
                       // 自定义顶部组件
                       Positioned(
@@ -1385,18 +1374,17 @@ class _PlayerItemState extends State<PlayerItem>
                                     onBackPressed(context);
                                   },
                                 ),
-                                (videoPageController.isFullscreen ||
-                                        Utils.isDesktop())
-                                    ? Text(
-                                        ' ${videoPageController.title} [${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode - 1]}]',
-                                        style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: Theme.of(context)
-                                                .textTheme
-                                                .titleMedium!
-                                                .fontSize),
-                                      )
-                                    : const SizedBox.shrink(),
+                                if (videoPageController.isFullscreen ||
+                                    Utils.isDesktop())
+                                  Text(
+                                    ' ${videoPageController.title} [${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode - 1]}]',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium!
+                                            .fontSize),
+                                  ),
                                 // 拖动条
                                 const Expanded(
                                   child: dtb.DragToMoveArea(
@@ -1571,40 +1559,37 @@ class _PlayerItemState extends State<PlayerItem>
                                   },
                                 ),
                                 // 更换选集
-                                (videoPageController.isFullscreen ||
-                                        Utils.isTablet() ||
-                                        Utils.isDesktop())
-                                    ? IconButton(
-                                        color: Colors.white,
-                                        icon: const Icon(Icons.skip_next),
-                                        onPressed: () {
-                                          if (videoPageController.loading) {
-                                            return;
-                                          }
-                                          if (videoPageController
-                                                  .currentEpisode ==
-                                              videoPageController
-                                                  .roadList[videoPageController
-                                                      .currentRoad]
-                                                  .data
-                                                  .length) {
-                                            KazumiDialog.showToast(
-                                              message: '已经是最新一集',
-                                            );
-                                            return;
-                                          }
-                                          KazumiDialog.showToast(
-                                              message:
-                                                  '正在加载${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode]}');
-                                          videoPageController.changeEpisode(
-                                              videoPageController
-                                                      .currentEpisode +
-                                                  1,
-                                              currentRoad: videoPageController
-                                                  .currentRoad);
-                                        },
-                                      )
-                                    : const SizedBox.shrink(),
+                                if (videoPageController.isFullscreen ||
+                                    Utils.isTablet() ||
+                                    Utils.isDesktop())
+                                  IconButton(
+                                    color: Colors.white,
+                                    icon: const Icon(Icons.skip_next),
+                                    onPressed: () {
+                                      if (videoPageController.loading) {
+                                        return;
+                                      }
+                                      if (videoPageController.currentEpisode ==
+                                          videoPageController
+                                              .roadList[videoPageController
+                                                  .currentRoad]
+                                              .data
+                                              .length) {
+                                        KazumiDialog.showToast(
+                                          message: '已经是最新一集',
+                                        );
+                                        return;
+                                      }
+                                      KazumiDialog.showToast(
+                                          message:
+                                              '正在加载${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode]}');
+                                      videoPageController.changeEpisode(
+                                          videoPageController.currentEpisode +
+                                              1,
+                                          currentRoad:
+                                              videoPageController.currentRoad);
+                                    },
+                                  ),
                                 Expanded(
                                   child: ProgressBar(
                                     timeLabelLocation: TimeLabelLocation.none,
@@ -1622,22 +1607,19 @@ class _PlayerItemState extends State<PlayerItem>
                                     },
                                   ),
                                 ),
-                                ((Utils.isCompact()) &&
-                                        !videoPageController.isFullscreen)
-                                    ? const SizedBox.shrink()
-                                    : Container(
-                                        padding:
-                                            const EdgeInsets.only(left: 10.0),
-                                        child: Text(
-                                          "${Utils.durationToString(playerController.currentPosition)} / ${Utils.durationToString(playerController.duration)}",
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: !Utils.isCompact()
-                                                ? 16.0
-                                                : 12.0,
-                                          ),
-                                        ),
+                                if (!((Utils.isCompact()) &&
+                                    !videoPageController.isFullscreen))
+                                  Container(
+                                    padding: const EdgeInsets.only(left: 10.0),
+                                    child: Text(
+                                      "${Utils.durationToString(playerController.currentPosition)} / ${Utils.durationToString(playerController.duration)}",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize:
+                                            !Utils.isCompact() ? 16.0 : 12.0,
                                       ),
+                                    ),
+                                  ),
                                 // 弹幕相关
                                 if (playerController.danmakuOn) ...[
                                   IconButton(
@@ -1680,37 +1662,33 @@ class _PlayerItemState extends State<PlayerItem>
                                     _handleDanmaku();
                                   },
                                 ),
-                                (!videoPageController.isFullscreen &&
-                                        !Utils.isTablet() &&
-                                        !Utils.isDesktop())
-                                    ? const SizedBox.shrink()
-                                    : IconButton(
-                                        color: Colors.white,
-                                        icon: Icon(
-                                            videoPageController.showTabBody
-                                                ? Icons.menu_open
-                                                : Icons.menu_open_outlined),
-                                        onPressed: () {
-                                          videoPageController.showTabBody =
-                                              !videoPageController.showTabBody;
-                                          widget.openMenu();
-                                        },
-                                      ),
-                                (Utils.isTablet() &&
-                                        videoPageController.isFullscreen &&
-                                        MediaQuery.of(context).size.height <
-                                            MediaQuery.of(context).size.width)
-                                    ? const SizedBox.shrink()
-                                    : IconButton(
-                                        color: Colors.white,
-                                        icon: Icon(
-                                            videoPageController.isFullscreen
-                                                ? Icons.fullscreen_exit
-                                                : Icons.fullscreen),
-                                        onPressed: () {
-                                          _handleFullscreen();
-                                        },
-                                      ),
+                                if (!(!videoPageController.isFullscreen &&
+                                    !Utils.isTablet() &&
+                                    !Utils.isDesktop()))
+                                  IconButton(
+                                    color: Colors.white,
+                                    icon: Icon(videoPageController.showTabBody
+                                        ? Icons.menu_open
+                                        : Icons.menu_open_outlined),
+                                    onPressed: () {
+                                      videoPageController.showTabBody =
+                                          !videoPageController.showTabBody;
+                                      widget.openMenu();
+                                    },
+                                  ),
+                                if (!(Utils.isTablet() &&
+                                    videoPageController.isFullscreen &&
+                                    MediaQuery.of(context).size.height <
+                                        MediaQuery.of(context).size.width))
+                                  IconButton(
+                                    color: Colors.white,
+                                    icon: Icon(videoPageController.isFullscreen
+                                        ? Icons.fullscreen_exit
+                                        : Icons.fullscreen),
+                                    onPressed: () {
+                                      _handleFullscreen();
+                                    },
+                                  ),
                               ],
                             ),
                           ),

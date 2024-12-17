@@ -181,8 +181,7 @@ class _PopularPageState extends State<PopularPage>
                       ),
                     ),
                     Padding(
-                      padding:
-                          EdgeInsets.only(top: (Utils.isDesktop()) ? 8 : 0),
+                      padding: EdgeInsets.only(top: Utils.isDesktop() ? 8 : 0),
                       child: Visibility(
                         visible: showSearchBar,
                         child: TextFormField(

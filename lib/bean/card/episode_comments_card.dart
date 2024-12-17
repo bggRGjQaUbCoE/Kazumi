@@ -40,48 +40,46 @@ class EpisodeCommentsCard extends StatelessWidget {
           const SizedBox(height: 8),
           commentsWithStyledText(
               Utils.richTextParser(commentItem.comment.comment), context),
-          (commentItem.replies.isNotEmpty)
-              ? ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: commentItem.replies.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(left: 48),
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Divider(
-                                color: Theme.of(context)
-                                    .dividerColor
-                                    .withAlpha(60)),
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundImage: NetworkImage(commentItem
-                                      .replies[index].user.avatar.large),
-                                ),
-                                const SizedBox(width: 8),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(commentItem
-                                        .replies[index].user.nickname),
-                                    Text(Utils.dateFormat(
-                                        commentItem.replies[index].createdAt)),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            commentsWithStyledText(
-                                Utils.richTextParser(
-                                    commentItem.replies[index].comment),
-                                context),
-                          ]),
-                    );
-                  })
-              : const SizedBox.shrink()
+          if (commentItem.replies.isNotEmpty)
+            ListView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: commentItem.replies.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 48),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Divider(
+                              color:
+                                  Theme.of(context).dividerColor.withAlpha(60)),
+                          Row(
+                            children: [
+                              CircleAvatar(
+                                backgroundImage: NetworkImage(commentItem
+                                    .replies[index].user.avatar.large),
+                              ),
+                              const SizedBox(width: 8),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      commentItem.replies[index].user.nickname),
+                                  Text(Utils.dateFormat(
+                                      commentItem.replies[index].createdAt)),
+                                ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          commentsWithStyledText(
+                              Utils.richTextParser(
+                                  commentItem.replies[index].comment),
+                              context),
+                        ]),
+                  );
+                })
         ]),
       ),
     );
@@ -89,11 +87,11 @@ class EpisodeCommentsCard extends StatelessWidget {
 
   Widget commentsWithStyledText(String comment, BuildContext context) {
     return StyledText(text: comment, tags: {
-      'b': StyledTextTag(
-        style: const TextStyle(fontWeight: FontWeight.bold),
+      'b': const StyledTextTag(
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
-      'i': StyledTextTag(
-        style: const TextStyle(fontStyle: FontStyle.italic),
+      'i': const StyledTextTag(
+        style: TextStyle(fontStyle: FontStyle.italic),
       ),
       'q': StyledTextTag(
         style: TextStyle(color: Theme.of(context).colorScheme.outline),
@@ -101,11 +99,11 @@ class EpisodeCommentsCard extends StatelessWidget {
       'format_quote': StyledTextIconTag(Icons.format_quote,
           color: Theme.of(context).colorScheme.outline,
           alignment: PlaceholderAlignment.top),
-      's': StyledTextTag(
-        style: const TextStyle(decoration: TextDecoration.lineThrough),
+      's': const StyledTextTag(
+        style: TextStyle(decoration: TextDecoration.lineThrough),
       ),
-      'u': StyledTextTag(
-        style: const TextStyle(decoration: TextDecoration.underline),
+      'u': const StyledTextTag(
+        style: TextStyle(decoration: TextDecoration.underline),
       ),
       'image': StyledTextWidgetBuilderTag(
         (_, attributes, textContent) {
