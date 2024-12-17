@@ -257,9 +257,10 @@ class _PlayerItemState extends State<PlayerItem>
       playerController.duration = playerController.mediaPlayer.state.duration;
       playerController.completed = playerController.mediaPlayer.state.completed;
       // 弹幕相关
-      if (playerController.currentPosition.inMicroseconds != 0 &&
+      if (playerController.danmakuOn == true &&
+          playerController.currentPosition.inMicroseconds != 0 &&
           playerController.mediaPlayer.state.playing == true &&
-          playerController.danmakuOn == true) {
+          !playerController.isBuffering) {
         playerController.danDanmakus[playerController.currentPosition.inSeconds]
             ?.asMap()
             .forEach((idx, danmaku) async {

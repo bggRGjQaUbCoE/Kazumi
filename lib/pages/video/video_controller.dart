@@ -53,10 +53,15 @@ abstract class _VideoPageController with Store {
 
   final PluginsController pluginsController = Modular.get<PluginsController>();
   final HistoryController historyController = Modular.get<HistoryController>();
-  late final PlayerController playerController = Modular.get<PlayerController>();
+  late final PlayerController playerController =
+      Modular.get<PlayerController>();
 
-  Future<void> changeEpisode(int episode, {int currentRoad = 0, int offset = 0}) async {
+  Future<void> changeEpisode(int episode,
+      {int currentRoad = 0, int offset = 0}) async {
     playerController.danmakuOffset = 0;
+    if (playerController.playing) {
+      playerController.pause();
+    }
 
     showDebugLog = false;
     loading = true;
@@ -79,4 +84,3 @@ abstract class _VideoPageController with Store {
     await webviewItemController.loadUrl(urlItem, offset: offset);
   }
 }
-
