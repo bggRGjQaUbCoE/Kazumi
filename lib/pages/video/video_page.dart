@@ -147,6 +147,7 @@ class _VideoPageState extends State<VideoPage>
       return Observer(builder: (context) {
         return Scaffold(
           key: _key,
+          resizeToAvoidBottomInset: false,
           appBar: ((videoPageController.currentPlugin.useNativePlayer ||
                   videoPageController.isFullscreen)
               ? null
@@ -438,6 +439,14 @@ class _VideoPageState extends State<VideoPage>
                       _bottomSheetController = null;
                     }
                   },
+                  handleBack: () {
+                    if (_bottomSheetController != null) {
+                      _bottomSheetController?.close();
+                      _bottomSheetController = null;
+                      return true;
+                    }
+                    return false;
+                  },
                   showComment: () {
                     // bool needRestart = playerController.playing;
                     // playerController.pause();
@@ -500,76 +509,141 @@ class _VideoPageState extends State<VideoPage>
                     // _focusNode.requestFocus();
                     // });
                   },
-                  showModDanmakuSheet: () {
+                  showDanmakuOffsetSheet: () {
                     _bottomSheetController = _key.currentState?.showBottomSheet(
                       (context) {
-                        playerController.danmakuOffset ??= 0;
                         Map<int, List<Danmaku>> oriDanDanmakus = {};
                         if (playerController.danmakuOffset != 0) {
                           playerController.danDanmakus.forEach((key, value) {
                             oriDanDanmakus[
-                                key + playerController.danmakuOffset!] = value;
+                                key + playerController.danmakuOffset] = value;
                           });
                         } else {
                           oriDanDanmakus = playerController.danDanmakus;
                         }
+
                         String getLabel() => playerController.danmakuOffset == 0
                             ? '不变'
-                            : '${playerController.danmakuOffset! < 0 ? '慢' : '快'}${playerController.danmakuOffset!.abs()}秒';
+                            : '${playerController.danmakuOffset < 0 ? '慢' : '快'}${playerController.danmakuOffset.abs()}秒';
+
                         return StatefulBuilder(
-                          builder: (context, setState) => Scaffold(
-                            appBar: AppBar(
-                              automaticallyImplyLeading: false,
-                              title: const Text(
-                                '弹幕时间轴调整',
-                                style: TextStyle(fontSize: 18),
+                          builder: (context, setState) {
+                            void onChanged(int value) {
+                              playerController.danmakuOffset = value;
+                              setState(() {});
+                              Map<int, List<Danmaku>> danDanmakus = {};
+                              oriDanDanmakus.forEach((key, value) {
+                                danDanmakus[key -
+                                    playerController.danmakuOffset] = value;
+                              });
+                              playerController.danmakuController.clear();
+                              playerController.danDanmakus = danDanmakus;
+                            }
+
+                            return Scaffold(
+                              resizeToAvoidBottomInset: false,
+                              appBar: AppBar(
+                                automaticallyImplyLeading: false,
+                                title: const Text(
+                                  '弹幕时间轴调整',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                actions: [
+                                  IconButton(
+                                    tooltip: '编辑调整',
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          String initialValue = playerController
+                                              .danmakuOffset
+                                              .toString();
+                                          return AlertDialog(
+                                            content: TextFormField(
+                                              initialValue: initialValue,
+                                              autofocus: true,
+                                              keyboardType: const TextInputType
+                                                  .numberWithOptions(
+                                                  signed: true),
+                                              inputFormatters: [
+                                                FilteringTextInputFormatter
+                                                    .allow(RegExp(r'[-\d+]')),
+                                              ],
+                                              onChanged: (value) {
+                                                initialValue = value;
+                                              },
+                                              decoration: const InputDecoration(
+                                                suffixText: 's',
+                                              ),
+                                            ),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: Text(
+                                                  '取消',
+                                                  style: TextStyle(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .outline),
+                                                ),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  onChanged(int.tryParse(
+                                                          initialValue) ??
+                                                      0);
+                                                },
+                                                child: const Text('确定'),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.edit),
+                                  ),
+                                  IconButton(
+                                    tooltip: '关闭',
+                                    onPressed: () => Navigator.pop(context),
+                                    icon: const Icon(Icons.clear),
+                                  ),
+                                  const SizedBox(width: 16),
+                                ],
                               ),
-                              actions: [
-                                IconButton(
-                                  tooltip: '关闭',
-                                  onPressed: () => Navigator.pop(context),
-                                  icon: const Icon(Icons.clear),
-                                ),
-                                const SizedBox(width: 16),
-                              ],
-                            ),
-                            body: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(getLabel()),
-                                Slider(
-                                  value: playerController.danmakuOffset!
-                                      .toDouble(),
-                                  min: -15,
-                                  max: 15,
-                                  divisions: 30,
-                                  label: getLabel(),
-                                  onChanged: (value) {
-                                    playerController.danmakuOffset =
-                                        value.round();
-                                    setState(() {});
-                                    Map<int, List<Danmaku>> danDanmakus = {};
-                                    oriDanDanmakus.forEach((key, value) {
-                                      danDanmakus[key -
-                                              playerController.danmakuOffset!] =
-                                          value;
-                                    });
-                                    playerController.danmakuController.clear();
-                                    playerController.danDanmakus = danDanmakus;
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
+                              body: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(getLabel()),
+                                  Slider(
+                                    value: playerController.danmakuOffset
+                                        .toDouble(),
+                                    min: -15,
+                                    max: 15,
+                                    divisions: 30,
+                                    label: getLabel(),
+                                    onChanged: (value) {
+                                      onChanged(value.round());
+                                    },
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         );
                       },
                       constraints: BoxConstraints(
-                          maxHeight: MediaQuery.of(context).size.height >
-                                  MediaQuery.of(context).size.width
-                              ? MediaQuery.of(context).size.height -
-                                  MediaQuery.of(context).size.width * 9 / 16 -
-                                  MediaQuery.paddingOf(context).top
-                              : MediaQuery.of(context).size.height,
+                          maxHeight: videoPageController.isFullscreen
+                              ? MediaQuery.of(context).size.height / 2
+                              : MediaQuery.of(context).size.height >
+                                      MediaQuery.of(context).size.width
+                                  ? MediaQuery.of(context).size.height -
+                                      MediaQuery.of(context).size.width *
+                                          9 /
+                                          16 -
+                                      MediaQuery.paddingOf(context).top
+                                  : MediaQuery.of(context).size.height,
                           maxWidth: MediaQuery.of(context).size.width >
                                   MediaQuery.of(context).size.height
                               ? MediaQuery.of(context).size.width * 9 / 16

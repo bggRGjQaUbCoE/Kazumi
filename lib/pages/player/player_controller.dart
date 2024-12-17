@@ -31,7 +31,7 @@ abstract class _PlayerController with Store {
   final VideoPageController videoPageController =
       Modular.get<VideoPageController>();
 
-  int? danmakuOffset;
+  late int danmakuOffset = 0;
   @observable
   Map<int, List<Danmaku>> danDanmakus = {};
 
