@@ -8,9 +8,11 @@ class CollectButton extends StatefulWidget {
     super.key,
     required this.bangumiItem,
     this.withRounder = true,
+    this.collectType,
   });
   final BangumiItem bangumiItem;
   final bool withRounder;
+  final int? collectType;
 
   @override
   State<CollectButton> createState() => _CollectButtonState();
@@ -25,9 +27,26 @@ class _CollectButtonState extends State<CollectButton> {
   late int collectType;
   final CollectController collectController = Modular.get<CollectController>();
 
+  int get _collectType => widget.collectType ?? collectType;
+
   @override
   void initState() {
     super.initState();
+    if (widget.collectType == null) {
+      collectType = collectController.getCollectType(widget.bangumiItem);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant CollectButton oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.bangumiItem.id != widget.bangumiItem.id &&
+        widget.collectType == null) {
+      int collectType = collectController.getCollectType(widget.bangumiItem);
+      if (this.collectType != collectType) {
+        this.collectType = collectType;
+      }
+    }
   }
 
   IconData _getIcon(int collectType) => switch (collectType) {
@@ -41,18 +60,17 @@ class _CollectButtonState extends State<CollectButton> {
 
   @override
   Widget build(BuildContext context) {
-    collectType = collectController.getCollectType(widget.bangumiItem);
     return PopupMenuButton(
       tooltip: '',
-      // initialValue: collectType,
+      // initialValue: _collectType,
       child: widget.withRounder
           ? NonClickableIconButton(
-              icon: _getIcon(collectType),
+              icon: _getIcon(_collectType),
             )
           : Padding(
               padding: const EdgeInsets.all(8.0),
               child: Icon(
-                _getIcon(collectType),
+                _getIcon(_collectType),
                 color: Colors.white,
               ),
             ),
@@ -61,7 +79,7 @@ class _CollectButtonState extends State<CollectButton> {
           6,
           (index) => PopupMenuItem(
             value: index,
-            enabled: index != collectType,
+            enabled: index != _collectType,
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -80,9 +98,13 @@ class _CollectButtonState extends State<CollectButton> {
         );
       },
       onSelected: (value) {
-        if (value != collectType && mounted) {
+        if (value != _collectType && mounted) {
           collectController.addCollect(widget.bangumiItem, type: value);
-          setState(() {});
+          if (widget.collectType == null) {
+            setState(() {
+              collectType = value;
+            });
+          }
         }
       },
     );

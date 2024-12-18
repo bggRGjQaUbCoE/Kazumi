@@ -154,6 +154,8 @@ class _CollectPageState extends State<CollectPage>
                                     bangumiItem:
                                         collectedBangumiRenderItem[index]
                                             .bangumiItem,
+                                    collectType:
+                                        collectedBangumiRenderItem[index].type,
                                   ),
                                 ),
                             ],
