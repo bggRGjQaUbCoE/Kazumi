@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
+import 'package:kazumi/modules/bangumi/bangumi_item.dart';
 import 'package:kazumi/pages/popular/popular_controller.dart';
 import 'package:kazumi/utils/utils.dart';
 import 'package:kazumi/utils/constants.dart';
@@ -8,6 +9,7 @@ import 'package:kazumi/pages/error/http_error.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:kazumi/bean/card/bangumi_card.dart';
 import 'package:flutter/services.dart';
+import 'package:mobx/mobx.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:kazumi/bean/appbar/sys_app_bar.dart';
 import 'package:logger/logger.dart';
@@ -39,17 +41,6 @@ class _PopularPageState extends State<PopularPage>
   void initState() {
     super.initState();
     timeout = false;
-    scrollController.addListener(() {
-      popularController.scrollOffset = scrollController.offset;
-      if (scrollController.position.pixels >=
-              scrollController.position.maxScrollExtent - 200 &&
-          popularController.isLoadingMore == false &&
-          popularController.searchKeyword == '') {
-        KazumiLogger().log(Level.info, 'Popular is loading more');
-        popularController.queryBangumiListFeed(
-            type: 'onload', tag: popularController.currentTag);
-      }
-    });
     if (popularController.bangumiList.isEmpty) {
       popularController.queryBangumiListFeed().then((_) {
         if (popularController.bangumiList.isEmpty && mounted) {
@@ -65,7 +56,6 @@ class _PopularPageState extends State<PopularPage>
   void dispose() {
     popularController.searchKeyword = '';
     _focusNode.dispose();
-    scrollController.removeListener(() {});
     super.dispose();
   }
 
@@ -303,14 +293,8 @@ class _PopularPageState extends State<PopularPage>
                                     height:
                                         (MediaQuery.of(context).size.height /
                                             2),
-                                    child: const Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        CircularProgressIndicator(),
-                                      ],
+                                    child: const Center(
+                                      child: CircularProgressIndicator(),
                                     ),
                                   ),
                                 );
@@ -338,28 +322,38 @@ class _PopularPageState extends State<PopularPage>
     });
   }
 
-  Widget contentGrid(bangumiList, Orientation orientation) {
+  Widget contentGrid(
+      ObservableList<BangumiItem> bangumiList, Orientation orientation) {
     int crossCount = orientation != Orientation.portrait ? 6 : 3;
-    return SliverGrid(
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        // 行间距
-        mainAxisSpacing: StyleString.cardSpace - 2,
-        // 列间距
-        crossAxisSpacing: StyleString.cardSpace,
-        // 列数
-        crossAxisCount: crossCount,
-        mainAxisExtent: MediaQuery.of(context).size.width / crossCount / 0.65 +
-            MediaQuery.textScalerOf(context).scale(32.0),
-      ),
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          return bangumiList!.isNotEmpty
-              ? BangumiCardV(bangumiItem: bangumiList[index])
-              : null;
-        },
-        childCount: bangumiList!.isNotEmpty ? bangumiList!.length : 10,
-      ),
-    );
+    return bangumiList.isNotEmpty
+        ? SliverGrid(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              // 行间距
+              mainAxisSpacing: StyleString.cardSpace - 2,
+              // 列间距
+              crossAxisSpacing: StyleString.cardSpace,
+              // 列数
+              crossAxisCount: crossCount,
+              mainAxisExtent:
+                  MediaQuery.of(context).size.width / crossCount / 0.65 +
+                      MediaQuery.textScalerOf(context).scale(32.0),
+            ),
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                if (index == bangumiList.length - 1 &&
+                    popularController.isLoadingMore == false &&
+                    popularController.searchKeyword == '') {
+                  KazumiLogger().log(Level.info, 'Popular is loading more');
+                  popularController.queryBangumiListFeed(
+                      type: 'onload', tag: popularController.currentTag);
+                }
+
+                return BangumiCardV(bangumiItem: bangumiList[index]);
+              },
+              childCount: bangumiList.length,
+            ),
+          )
+        : const SizedBox.shrink();
   }
 
   Widget tagFilter() {
