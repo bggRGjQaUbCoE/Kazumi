@@ -28,7 +28,6 @@ class _CollectButtonState extends State<CollectButton> {
   @override
   void initState() {
     super.initState();
-    collectType = collectController.getCollectType(widget.bangumiItem);
   }
 
   IconData _getIcon(int collectType) => switch (collectType) {
@@ -42,12 +41,13 @@ class _CollectButtonState extends State<CollectButton> {
 
   @override
   Widget build(BuildContext context) {
+    collectType = collectController.getCollectType(widget.bangumiItem);
     return PopupMenuButton(
       tooltip: '',
       // initialValue: collectType,
       child: widget.withRounder
           ? NonClickableIconButton(
-              icon: Icon(_getIcon(collectType)),
+              icon: _getIcon(collectType),
             )
           : Padding(
               padding: const EdgeInsets.all(8.0),
@@ -82,9 +82,7 @@ class _CollectButtonState extends State<CollectButton> {
       onSelected: (value) {
         if (value != collectType && mounted) {
           collectController.addCollect(widget.bangumiItem, type: value);
-          setState(() {
-            collectType = value;
-          });
+          setState(() {});
         }
       },
     );
@@ -92,8 +90,7 @@ class _CollectButtonState extends State<CollectButton> {
 }
 
 class NonClickableIconButton extends StatelessWidget {
-  final Widget icon;
-  final double iconSize;
+  final IconData icon;
   final Color? iconColor;
   final Color? backgroundColor;
   final double padding;
@@ -101,7 +98,6 @@ class NonClickableIconButton extends StatelessWidget {
   const NonClickableIconButton({
     super.key,
     required this.icon,
-    this.iconSize = 24.0,
     this.iconColor,
     this.backgroundColor,
     this.padding = 8.0,
@@ -111,14 +107,15 @@ class NonClickableIconButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color effectiveBackgroundColor =
         backgroundColor ?? Theme.of(context).colorScheme.secondaryContainer;
-
+    final Color effectiveIconColor =
+        iconColor ?? Theme.of(context).colorScheme.onSecondaryContainer;
     return Container(
       padding: EdgeInsets.all(padding),
       decoration: BoxDecoration(
         color: effectiveBackgroundColor,
         shape: BoxShape.circle,
       ),
-      child: icon,
+      child: Icon(icon, color: effectiveIconColor),
     );
   }
 }
