@@ -24,9 +24,8 @@ abstract class _CollectController with Store {
     collectibles.addAll(GStorage.collectibles.values.toList());
   }
 
-  int getCollectType(BangumiItem bangumiItem) {
-    CollectedBangumi? collectedBangumi =
-        GStorage.collectibles.get(bangumiItem.id);
+  int getCollectType(int id) {
+    CollectedBangumi? collectedBangumi = GStorage.collectibles.get(id);
     if (collectedBangumi == null) {
       return 0;
     } else {

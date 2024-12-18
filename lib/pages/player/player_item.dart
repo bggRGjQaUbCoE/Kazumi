@@ -793,7 +793,8 @@ class _PlayerItemState extends State<PlayerItem>
 
   @override
   Widget build(BuildContext context) {
-    collectType = collectController.getCollectType(infoController.bangumiItem);
+    collectType =
+        collectController.getCollectType(infoController.bangumiItem.id);
 
     return Observer(
       builder: (context) {

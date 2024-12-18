@@ -1,5 +1,7 @@
+import 'package:flutter_modular/flutter_modular.dart';
 import 'package:kazumi/modules/bangumi/bangumi_item.dart';
 import 'package:kazumi/modules/history/history_module.dart';
+import 'package:kazumi/pages/collect/collect_controller.dart';
 import 'package:kazumi/utils/storage.dart';
 import 'package:hive/hive.dart';
 import 'package:mobx/mobx.dart';
@@ -13,7 +15,25 @@ abstract class _HistoryController with Store {
   var storedHistories = GStorage.histories;
 
   @observable
-  ObservableList<History> histories = ObservableList<History>(); 
+  ObservableList<History> histories = ObservableList<History>();
+
+  final CollectController collectController = Modular.get<CollectController>();
+
+  late final Map<int, int> collectTypeMap = {};
+
+  int getCollectType(int id) {
+    int? type = collectTypeMap[id];
+    if (type == null) {
+      type = collectController.getCollectType(id);
+      collectTypeMap[id] = type;
+    }
+    return type;
+  }
+
+  void updateCollectType(int id, int type) {
+    collectTypeMap[id] = type;
+    histories = ObservableList.of(histories);
+  }
 
   void init() {
     var temp = storedHistories.values.toList();
@@ -27,13 +47,22 @@ abstract class _HistoryController with Store {
   }
 
   void updateHistory(
-      int episode, int road, String adapterName, BangumiItem bangumiItem, Duration progress, String lastSrc, String lastWatchEpisodeName) {
-    bool privateMode = setting.get(SettingBoxKey.privateMode, defaultValue: false);
+      int episode,
+      int road,
+      String adapterName,
+      BangumiItem bangumiItem,
+      Duration progress,
+      String lastSrc,
+      String lastWatchEpisodeName) {
+    bool privateMode =
+        setting.get(SettingBoxKey.privateMode, defaultValue: false);
     if (privateMode) {
       return;
     }
-    var history = storedHistories.get(History.getKey(adapterName, bangumiItem)) ??
-        History(bangumiItem, episode, adapterName, DateTime.now(), lastSrc, lastWatchEpisodeName);
+    var history =
+        storedHistories.get(History.getKey(adapterName, bangumiItem)) ??
+            History(bangumiItem, episode, adapterName, DateTime.now(), lastSrc,
+                lastWatchEpisodeName);
     history.lastWatchEpisode = episode;
     history.lastWatchTime = DateTime.now();
     if (lastSrc != '') {
@@ -60,7 +89,8 @@ abstract class _HistoryController with Store {
     return history?.progresses[history.lastWatchEpisode];
   }
 
-  Progress? findProgress(BangumiItem bangumiItem, String adapterName, int episode) {
+  Progress? findProgress(
+      BangumiItem bangumiItem, String adapterName, int episode) {
     var history = storedHistories.get(History.getKey(adapterName, bangumiItem));
     return history?.progresses[episode];
   }

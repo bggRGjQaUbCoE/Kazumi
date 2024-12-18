@@ -9,10 +9,12 @@ class CollectButton extends StatefulWidget {
     required this.bangumiItem,
     this.withRounder = true,
     this.collectType,
+    this.callback,
   });
   final BangumiItem bangumiItem;
   final bool withRounder;
   final int? collectType;
+  final ValueChanged<int>? callback;
 
   @override
   State<CollectButton> createState() => _CollectButtonState();
@@ -33,7 +35,7 @@ class _CollectButtonState extends State<CollectButton> {
   void initState() {
     super.initState();
     if (widget.collectType == null) {
-      collectType = collectController.getCollectType(widget.bangumiItem);
+      collectType = collectController.getCollectType(widget.bangumiItem.id);
     }
   }
 
@@ -42,7 +44,7 @@ class _CollectButtonState extends State<CollectButton> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.bangumiItem.id != widget.bangumiItem.id &&
         widget.collectType == null) {
-      int collectType = collectController.getCollectType(widget.bangumiItem);
+      int collectType = collectController.getCollectType(widget.bangumiItem.id);
       if (this.collectType != collectType) {
         this.collectType = collectType;
       }
@@ -98,6 +100,7 @@ class _CollectButtonState extends State<CollectButton> {
         );
       },
       onSelected: (value) {
+        widget.callback?.call(value);
         if (value != _collectType && mounted) {
           collectController.addCollect(widget.bangumiItem, type: value);
           if (widget.collectType == null) {
