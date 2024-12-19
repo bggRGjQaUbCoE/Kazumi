@@ -9,7 +9,7 @@ class TimelineController = _TimelineController with _$TimelineController;
 
 abstract class _TimelineController with Store {
   @observable
-  List<List<BangumiItem>> bangumiCalendar = [];
+  ObservableList<List<BangumiItem>> bangumiCalendar = ObservableList<List<BangumiItem>>();
 
   @observable
   String seasonString = '';
@@ -17,10 +17,26 @@ abstract class _TimelineController with Store {
   DateTime selectedDate = DateTime.now();
 
   Future<void> getSchedules() async {
-    bangumiCalendar = await BangumiHTTP.getCalendar();
+    final resBangumiCalendar = await BangumiHTTP.getCalendar();
+    bangumiCalendar.clear();
+    bangumiCalendar.addAll(resBangumiCalendar);
   }
 
   Future<void> getSchedulesBySeason() async {
-    bangumiCalendar = await BangumiHTTP.getCalendarBySearch(AnimeSeason(selectedDate).toSeasonStartAndEnd());
+    // 4次获取，每次最多20部
+    var time = 0;
+    const maxTime = 4;
+    const limit = 20;
+    var resBangumiCalendar = List.generate(7, (_) => <BangumiItem>[]);
+    for (time = 0; time < maxTime; time++) {
+      final offset = time * limit;
+      var newList = await BangumiHTTP.getCalendarBySearch(
+          AnimeSeason(selectedDate).toSeasonStartAndEnd(), limit, offset);
+      for (int i = 0; i < resBangumiCalendar.length; ++i) {
+        resBangumiCalendar[i].addAll(newList[i]);
+      }
+      bangumiCalendar.clear();
+      bangumiCalendar.addAll(resBangumiCalendar);
+    }
   }
 }

@@ -101,8 +101,8 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                               ),
                           backgroundColor: Colors.transparent,
                         ),
-                        child: Text(widget.bangumiItem.type == 2 ? '番剧' : '其他',
-                            style: style),
+                        child:
+                            Text('#${widget.bangumiItem.rank}', style: style),
                       ),
                       const SizedBox(width: 7),
                       FilledButton.tonal(
@@ -116,8 +116,12 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                               ),
                           backgroundColor: Colors.transparent,
                         ),
-                        child:
-                            Text('#${widget.bangumiItem.rank}', style: style),
+                        child: Text(
+                            Utils.isCompact()
+                                ? Utils.shrinkAirDate(
+                                    widget.bangumiItem.airDate)
+                                : widget.bangumiItem.airDate,
+                            style: style),
                       ),
                       if (!Utils.isCompact()) ...[
                         const SizedBox(width: 7),
@@ -132,7 +136,9 @@ class _BangumiInfoCardVState extends State<BangumiInfoCardV> {
                                 ),
                             backgroundColor: Colors.transparent,
                           ),
-                          child: Text(widget.bangumiItem.airDate, style: style),
+                          child: Text(
+                              widget.bangumiItem.type == 2 ? '番剧' : '其他',
+                              style: style),
                         ),
                       ],
                     ],
