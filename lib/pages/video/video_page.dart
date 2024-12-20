@@ -18,6 +18,7 @@ import 'package:kazumi/utils/utils.dart';
 import 'package:flutter/services.dart';
 import 'package:kazumi/bean/appbar/drag_to_move_bar.dart' as dtb;
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
+import 'package:screen_brightness_platform_interface/screen_brightness_platform_interface.dart';
 import 'package:scrollview_observer/scrollview_observer.dart';
 
 class VideoPage extends StatefulWidget {
@@ -89,6 +90,7 @@ class _VideoPageState extends State<VideoPage>
   @override
   void dispose() {
     try {
+      ScreenBrightnessPlatform.instance.resetApplicationScreenBrightness();
       playerController.mediaPlayer.dispose();
     } catch (_) {}
     observerController.controller?.dispose();
