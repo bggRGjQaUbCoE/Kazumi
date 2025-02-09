@@ -42,7 +42,8 @@ class _InfoPageState extends State<InfoPage>
     // Because the gap between different bangumi API reponse is too large, sometimes we need to query the bangumi info again
     // We need the type parameter to determine whether to attach the new data to the old data
     // We can't generally replace the old data with the new data, because the old data containes images url, update them will cause the image to reload and flicker
-    if (infoController.bangumiItem.summary == '' || infoController.bangumiItem.tags.isEmpty) {
+    if (infoController.bangumiItem.summary == '' ||
+        infoController.bangumiItem.tags.isEmpty) {
       queryBangumiInfoByID(infoController.bangumiItem.id, type: 'attach');
     }
     queryManager = QueryManager();
@@ -84,15 +85,12 @@ class _InfoPageState extends State<InfoPage>
                 child: Opacity(
                   opacity: 0.2,
                   child: LayoutBuilder(builder: (context, boxConstraints) {
-                    return ImageFiltered(
-                      imageFilter: ImageFilter.blur(sigmaX: 15.0, sigmaY: 15.0),
-                      child: NetworkImgLayer(
-                        src: infoController.bangumiItem.images['large'] ?? '',
-                        width: boxConstraints.maxWidth,
-                        height: boxConstraints.maxHeight,
-                        fadeInDuration: const Duration(milliseconds: 0),
-                        fadeOutDuration: const Duration(milliseconds: 0),
-                      ),
+                    return NetworkImgLayer(
+                      src: infoController.bangumiItem.images['large'] ?? '',
+                      width: boxConstraints.maxWidth,
+                      height: boxConstraints.maxHeight,
+                      fadeInDuration: const Duration(milliseconds: 0),
+                      fadeOutDuration: const Duration(milliseconds: 0),
                     );
                   }),
                 ),
