@@ -584,38 +584,41 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                             widget.onBackPressed(context);
                           },
                         ),
-                        (videoPageController.isFullscreen || Utils.isDesktop())
-                            ? Text(
-                                ' ${videoPageController.title} [${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode - 1]}]',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: Theme.of(context)
-                                        .textTheme
-                                        .titleMedium!
-                                        .fontSize),
-                              )
-                            : Container(),
                         // 拖动条
-                        const Expanded(
-                          child:
-                              dtb.DragToMoveArea(child: SizedBox(height: 40)),
+                        Expanded(
+                          child: dtb.DragToMoveArea(
+                            child: Text(
+                              ' ${videoPageController.title} [${videoPageController.roadList[videoPageController.currentRoad].identifier[videoPageController.currentEpisode - 1]}]',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .fontSize,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
                         ),
                         // 跳过
                         forwardIcon(),
                         if (Utils.isDesktop() &&
                             !videoPageController.isFullscreen)
                           IconButton(
-                              onPressed: () {
-                                if (videoPageController.isPip) {
-                                  Utils.exitDesktopPIPWindow();
-                                } else {
-                                  Utils.enterDesktopPIPWindow();
-                                }
-                                videoPageController.isPip =
-                                    !videoPageController.isPip;
-                              },
-                              icon: const Icon(Icons.picture_in_picture,
-                                  color: Colors.white)),
+                            onPressed: () {
+                              if (videoPageController.isPip) {
+                                Utils.exitDesktopPIPWindow();
+                              } else {
+                                Utils.enterDesktopPIPWindow();
+                              }
+                              videoPageController.isPip =
+                                  !videoPageController.isPip;
+                            },
+                            icon: const Icon(
+                              Icons.picture_in_picture,
+                              color: Colors.white,
+                            ),
+                          ),
                         // 追番
                         CollectButton(
                           bangumiItem: infoController.bangumiItem,
