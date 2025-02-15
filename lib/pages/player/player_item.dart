@@ -6,6 +6,7 @@ import 'package:kazumi/modules/bili_dm/dm.pb.dart';
 import 'package:kazumi/pages/player/bili_search_dialog.dart';
 import 'package:kazumi/pages/player/player_item_panel.dart';
 import 'package:kazumi/pages/player/smallest_player_item_panel.dart';
+import 'package:kazumi/utils/constants.dart';
 import 'package:kazumi/utils/logger.dart';
 import 'package:kazumi/utils/utils.dart';
 import 'package:kazumi/utils/webdav.dart';
@@ -764,6 +765,28 @@ class _PlayerItemState extends State<PlayerItem>
     );
   }
 
+  /// Used to decide which panel is used.
+  /// It's too complicated to write these in conditional sentence.
+  /// * true: use [PlayerItemPanel]
+  /// * false: use [SmallestPlayerItemPanel]
+  bool needFullPanel(BuildContext context) {
+    // windows too small, workaround for ohos floating window
+    if (MediaQuery.sizeOf(context).width < LayoutBreakpoint.compact['width']!) {
+      return false;
+    }
+    // in desktop pip mode
+    if (videoPageController.isPip) {
+      return false;
+    }
+    // does not meet Google's phone landscape height and tablet landscape width requirements.
+    if (MediaQuery.sizeOf(context).height >
+            LayoutBreakpoint.compact['height']! &&
+        MediaQuery.sizeOf(context).width < LayoutBreakpoint.medium['width']!) {
+      return false;
+    }
+    return true;
+  }
+
   @override
   void onWindowRestore() {
     playerController.danmakuController.onClear();
@@ -1083,7 +1106,7 @@ class _PlayerItemState extends State<PlayerItem>
                       ),
                     ),
                     // 播放器控制面板
-                    (MediaQuery.of(context).size.width >= 600)
+                    (needFullPanel(context))
                         ? PlayerItemPanel(
                             onBackPressed: widget.onBackPressed,
                             setPlaybackSpeed: setPlaybackSpeed,
