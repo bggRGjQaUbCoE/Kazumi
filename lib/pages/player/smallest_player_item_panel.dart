@@ -33,6 +33,7 @@ class SmallestPlayerItemPanel extends StatefulWidget {
     required this.cancelHideTimer,
     required this.showDmOffsetDialog,
     required this.handleDanmaku,
+    required this.showVideoInfo,
   });
 
   final void Function(BuildContext) onBackPressed;
@@ -48,6 +49,7 @@ class SmallestPlayerItemPanel extends StatefulWidget {
   final void Function() startHideTimer;
   final void Function() cancelHideTimer;
   final VoidCallback showDmOffsetDialog;
+  final void Function() showVideoInfo;
 
   @override
   State<SmallestPlayerItemPanel> createState() =>
@@ -65,36 +67,6 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
   final InfoController infoController = Modular.get<InfoController>();
   final PlayerController playerController = Modular.get<PlayerController>();
   final TextEditingController textController = TextEditingController();
-
-  void showVideoInfo() async {
-    String currentDemux = await Utils.getCurrentDemux();
-    KazumiDialog.show(
-        // onDismiss: () {
-        //   _focusNode.requestFocus();
-        // },
-        builder: (context) {
-      return AlertDialog(
-        title: const Text('视频详情'),
-        content: SelectableText.rich(
-          TextSpan(
-            children: [
-              TextSpan(text: '规则: ${videoPageController.currentPlugin.name}\n'),
-              TextSpan(text: '硬件解码: ${haEnable ? '启用' : '禁用'}\n'),
-              TextSpan(text: '解复用器: $currentDemux\n'),
-              const TextSpan(text: '资源地址: '),
-              TextSpan(
-                text: playerController.videoUrl,
-              ),
-            ],
-          ),
-          style: Theme.of(context).textTheme.bodyLarge!,
-        ),
-        actions: const [
-          TextButton(onPressed: KazumiDialog.dismiss, child: Text('取消')),
-        ],
-      );
-    });
-  }
 
   void showForwardChange() {
     KazumiDialog.show(builder: (context) {
@@ -585,7 +557,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
                           ),
                           MenuItemButton(
                             onPressed: () {
-                              showVideoInfo();
+                              widget.showVideoInfo();
                             },
                             child: const Padding(
                               padding: EdgeInsets.fromLTRB(0, 10, 10, 10),

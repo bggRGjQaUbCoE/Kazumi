@@ -36,6 +36,7 @@ class PlayerItemPanel extends StatefulWidget {
     required this.cancelHideTimer,
     required this.showDmOffsetDialog,
     required this.handleDanmaku,
+    required this.showVideoInfo,
   });
 
   final void Function(BuildContext) onBackPressed;
@@ -52,7 +53,11 @@ class PlayerItemPanel extends StatefulWidget {
   final void Function() cancelHideTimer;
   final void Function() handleDanmaku;
   final void Function(String) sendDanmaku;
+<<<<<<< HEAD
   final VoidCallback showDmOffsetDialog;
+=======
+  final void Function() showVideoInfo;
+>>>>>>> a2ef079 (add player debug mode && fix video parser output)
 
   @override
   State<PlayerItemPanel> createState() => _PlayerItemPanelState();
@@ -158,36 +163,6 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
         },
       ),
     );
-  }
-
-  void showVideoInfo() async {
-    String currentDemux = await Utils.getCurrentDemux();
-    KazumiDialog.show(
-        // onDismiss: () {
-        //   _focusNode.requestFocus();
-        // },
-        builder: (context) {
-      return AlertDialog(
-        title: const Text('视频详情'),
-        content: SelectableText.rich(
-          TextSpan(
-            children: [
-              TextSpan(text: '规则: ${videoPageController.currentPlugin.name}\n'),
-              TextSpan(text: '硬件解码: ${haEnable ? '启用' : '禁用'}\n'),
-              TextSpan(text: '解复用器: $currentDemux\n'),
-              const TextSpan(text: '资源地址: '),
-              TextSpan(
-                text: playerController.videoUrl,
-              ),
-            ],
-          ),
-          style: Theme.of(context).textTheme.bodyLarge!,
-        ),
-        actions: const [
-          TextButton(onPressed: KazumiDialog.dismiss, child: Text('取消')),
-        ],
-      );
-    });
   }
 
   // 选择倍速
@@ -682,7 +657,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
                               ),
                               MenuItemButton(
                                 onPressed: () {
-                                  showVideoInfo();
+                                  widget.showVideoInfo();
                                 },
                                 child: const Padding(
                                   padding: EdgeInsets.fromLTRB(0, 10, 10, 10),
