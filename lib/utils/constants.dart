@@ -12,11 +12,11 @@ class StyleString {
 
 const ProgressIndicatorThemeData progressIndicatorTheme2024 =
     ProgressIndicatorThemeData(
-  // This flag is deprecated since 3.29 but not default to false yet. Keep
-  // it to false so we have the latest M3 style process indicator.
-  // ignore: deprecated_member_use
-  year2023: false,
-);
+        // This flag is deprecated since 3.29 but not default to false yet. Keep
+        // it to false so we have the latest M3 style process indicator.
+        // ignore: deprecated_member_use
+        // year2023: false,
+        );
 
 /// The page transition method defined here is managed by flutter, and the native transition method of flutter is set here.
 /// Transition method here will be overridden by the transition method of modular, and do not set the transition method in modular to prevent
