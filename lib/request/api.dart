@@ -36,6 +36,8 @@ class Api {
       'https://next.bgm.tv/p1/characters/{0}';
   static const String bangumiEpisodeByIDNext =
       'https://next.bgm.tv/p1/episodes/';
+  static const String bangumiCharacterByIDNext =
+      'https://next.bgm.tv/p1/characters/';
   // 弹弹Play
   static const String dandanIndex = 'https://www.dandanplay.com/';
   static const String dandanAPIDomain = 'https://api.dandanplay.net';
