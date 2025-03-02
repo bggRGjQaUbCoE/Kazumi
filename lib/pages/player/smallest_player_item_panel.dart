@@ -164,7 +164,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
   @override
   Widget build(BuildContext context) {
     final svgString = danmakuOnSvg.replaceFirst(
-        '#00AEEC',
+        '00AEEC',
         Theme.of(context)
             .colorScheme
             .primary
