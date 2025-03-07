@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:kazumi/modules/bili_dm/dm.pb.dart';
 import 'package:kazumi/pages/player/bili_search_dialog.dart';
@@ -502,44 +503,171 @@ class _PlayerItemState extends State<PlayerItem>
     if (playerController.danDanmakus.isEmpty) {
       return;
     }
+
+    int periodic = 350;
+    late DateTime dateTime;
+    late Timer timer;
+
+    void onUpdate(BuildContext context, bool isLeft) {
+      if (isLeft) {
+        playerController.dmOffset -= 1;
+      } else {
+        playerController.dmOffset += 1;
+      }
+      if (context.mounted) {
+        (context as Element?)?.markNeedsBuild();
+      }
+    }
+
+    void onTapUp(BuildContext context, bool isLeft) {
+      timer.cancel();
+      if (DateTime.now().difference(dateTime).inMilliseconds < 350) {
+        onUpdate(context, isLeft);
+      }
+    }
+
+    void updateTimer(BuildContext context, bool isLeft) {
+      if (periodic > 10) {
+        int duration = DateTime.now().difference(dateTime).inMilliseconds;
+        periodic = max(10, 350 - duration ~/ 10);
+        timer.cancel();
+        timer = Timer.periodic(
+          Duration(milliseconds: periodic),
+          (_) {
+            updateTimer(context, isLeft);
+            onUpdate(context, isLeft);
+          },
+        );
+      }
+    }
+
+    Widget item(context, [bool isLeft = true]) => Expanded(
+          child: InkWell(
+            borderRadius: BorderRadius.circular(25),
+            onTapDown: (details) {
+              periodic = 350;
+              dateTime = DateTime.now();
+
+              timer = Timer.periodic(
+                Duration(milliseconds: periodic),
+                (_) {
+                  updateTimer(context, isLeft);
+                  onUpdate(context, isLeft);
+                },
+              );
+            },
+            onTapUp: (details) {
+              onTapUp(context, isLeft);
+            },
+            onTapCancel: () {
+              onTapUp(context, isLeft);
+            },
+            child: Ink(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                color: Theme.of(context).colorScheme.secondaryContainer,
+              ),
+              child: IntrinsicHeight(
+                child: Center(
+                  child: Text(
+                    '${isLeft ? '慢' : '快'}1秒',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
     KazumiDialog.show(
       builder: (context) {
-        ButtonStyle buttonStyle = FilledButton.styleFrom(
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          visualDensity: const VisualDensity(horizontal: -2, vertical: -2),
-        );
         return AlertDialog(
-          title: const Text(
-            '调整弹幕时间轴',
-            style: TextStyle(fontSize: 18),
-          ),
-          content: Row(
+          title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              FilledButton.tonal(
-                style: buttonStyle,
-                onPressed: () {
-                  playerController.dmOffset -= 1;
-                  if (context.mounted) {
-                    (context as Element?)?.markNeedsBuild();
-                  }
-                },
-                child: const Text('慢1秒'),
+              const Text(
+                '调整弹幕时间轴',
+                style: TextStyle(fontSize: 18),
               ),
+              SizedBox(
+                width: 28,
+                height: 28,
+                child: IconButton(
+                  style: IconButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    backgroundColor:
+                        Theme.of(context).colorScheme.secondaryContainer,
+                    foregroundColor:
+                        Theme.of(context).colorScheme.onSecondaryContainer,
+                  ),
+                  onPressed: () async {
+                    int? dmOffset = await showDialog(
+                      context: context,
+                      builder: (context) {
+                        String initialValue =
+                            playerController.dmOffset.toString();
+                        return AlertDialog(
+                          title: const Text(
+                            '编辑弹幕时间轴',
+                            style: TextStyle(fontSize: 18),
+                          ),
+                          content: TextFormField(
+                            autofocus: true,
+                            initialValue: initialValue,
+                            onChanged: (value) => initialValue = value,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              signed: true,
+                            ),
+                            inputFormatters: [
+                              FilteringTextInputFormatter.allow(
+                                RegExp(r'\-|\d+'),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: Text(
+                                '取消',
+                                style: TextStyle(
+                                  color: Theme.of(context).colorScheme.outline,
+                                ),
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(
+                                context,
+                                int.tryParse(initialValue),
+                              ),
+                              child: const Text('确定'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    if (dmOffset != null) {
+                      playerController.dmOffset = dmOffset;
+                      if (context.mounted) {
+                        (context as Element?)?.markNeedsBuild();
+                      }
+                    }
+                  },
+                  icon: const Icon(size: 16, Icons.edit),
+                ),
+              ),
+            ],
+          ),
+          content: Row(
+            children: [
+              item(context),
+              const SizedBox(width: 10),
               Text(playerController.dmOffset == 0
                   ? '正常'
                   : '${playerController.dmOffset > 0 ? '快' : '慢'}${playerController.dmOffset.abs()}秒'),
-              FilledButton.tonal(
-                style: buttonStyle,
-                onPressed: () {
-                  playerController.dmOffset += 1;
-                  if (context.mounted) {
-                    (context as Element?)?.markNeedsBuild();
-                  }
-                },
-                child: const Text('快1秒'),
-              ),
+              const SizedBox(width: 10),
+              item(context, false),
             ],
           ),
         );
