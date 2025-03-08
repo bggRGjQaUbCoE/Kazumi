@@ -54,11 +54,8 @@ class PlayerItemPanel extends StatefulWidget {
   final void Function() cancelHideTimer;
   final void Function() handleDanmaku;
   final void Function(String) sendDanmaku;
-<<<<<<< HEAD
   final VoidCallback showDmOffsetDialog;
-=======
   final void Function() showVideoInfo;
->>>>>>> a2ef079 (add player debug mode && fix video parser output)
 
   @override
   State<PlayerItemPanel> createState() => _PlayerItemPanelState();
@@ -318,7 +315,7 @@ class _PlayerItemPanelState extends State<PlayerItemPanel> {
         Theme.of(context)
             .colorScheme
             .primary
-            .toARGB32()
+            .value
             .toRadixString(16)
             .substring(2));
     return Observer(builder: (context) {

@@ -168,7 +168,7 @@ class _SmallestPlayerItemPanelState extends State<SmallestPlayerItemPanel> {
         Theme.of(context)
             .colorScheme
             .primary
-            .toARGB32()
+            .value
             .toRadixString(16)
             .substring(2));
     return Observer(builder: (context) {
