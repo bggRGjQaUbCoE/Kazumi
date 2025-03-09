@@ -150,10 +150,7 @@ class _PlayerSettingsPageState extends State<WebDavSettingsPage> {
                       onPressed: (_) async {
                         Modular.to.pushNamed('/settings/webdav/editor');
                       },
-                      title: Text(
-                        'WEBDAV配置',
-                        style: Theme.of(context).textTheme.titleMedium!,
-                      ),
+                      title: const Text('WEBDAV配置'),
                     ),
                   ],
                 ),

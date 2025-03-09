@@ -312,29 +312,41 @@ class _InfoPageState extends State<InfoPage>
                             in infoController.pluginSearchResponseList) {
                           if (searchResponse.pluginName == plugin.name) {
                             for (var searchItem in searchResponse.data) {
-                              cardList.add(Card(
-                                color: Colors.transparent,
-                                child: ListTile(
-                                  tileColor: Colors.transparent,
-                                  title: Text(searchItem.name),
-                                  onTap: () async {
-                                    KazumiDialog.showLoading(msg: '获取中');
-                                    videoPageController.currentPlugin = plugin;
-                                    videoPageController.title = searchItem.name;
-                                    videoPageController.src = searchItem.src;
-                                    try {
-                                      await infoController.queryRoads(
-                                          searchItem.src, plugin.name);
-                                      KazumiDialog.dismiss();
-                                      Modular.to.pushNamed('/video/');
-                                    } catch (e) {
-                                      KazumiLogger()
-                                          .log(Level.error, e.toString());
-                                      KazumiDialog.dismiss();
-                                    }
-                                  },
+                              cardList.add(
+                                Card(
+                                  margin: EdgeInsets.zero,
+                                  elevation: 0,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant
+                                      .withOpacity(0.2),
+                                  child: ListTile(
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    tileColor: Colors.transparent,
+                                    title: Text(searchItem.name),
+                                    onTap: () async {
+                                      KazumiDialog.showLoading(msg: '获取中');
+                                      videoPageController.currentPlugin =
+                                          plugin;
+                                      videoPageController.title =
+                                          searchItem.name;
+                                      videoPageController.src = searchItem.src;
+                                      try {
+                                        await infoController.queryRoads(
+                                            searchItem.src, plugin.name);
+                                        KazumiDialog.dismiss();
+                                        Modular.to.pushNamed('/video/');
+                                      } catch (e) {
+                                        KazumiLogger()
+                                            .log(Level.error, e.toString());
+                                        KazumiDialog.dismiss();
+                                      }
+                                    },
+                                  ),
                                 ),
-                              ));
+                              );
                             }
                           }
                         }
@@ -379,7 +391,23 @@ class _InfoPageState extends State<InfoPage>
                                           ),
                                         ],
                                       )
-                                    : ListView(children: cardList));
+                                    : ListView.separated(
+                                        padding: EdgeInsets.only(
+                                          top: 8,
+                                          left: 8,
+                                          right: 8,
+                                          bottom: MediaQuery.paddingOf(context)
+                                                  .bottom +
+                                              80,
+                                        ),
+                                        itemCount: cardList.length,
+                                        itemBuilder: (context, index) {
+                                          return cardList[index];
+                                        },
+                                        separatorBuilder: (context, index) {
+                                          return const SizedBox(height: 8);
+                                        },
+                                      ));
                       }),
                     ),
                   ),

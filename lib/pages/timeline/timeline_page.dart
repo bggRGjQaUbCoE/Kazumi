@@ -194,11 +194,11 @@ class _TimelinePageState extends State<TimelinePage>
     int crossCount = orientation != Orientation.portrait ? 6 : 3;
     for (dynamic bangumiList in bangumiCalendar) {
       gridViewList.add(
-        Padding(
-          padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
-          child: CustomScrollView(
-            slivers: [
-              SliverGrid(
+        CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.all(8),
+              sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisSpacing: StyleString.cardSpace - 2,
                   crossAxisSpacing: StyleString.cardSpace,
@@ -214,21 +214,29 @@ class _TimelinePageState extends State<TimelinePage>
                             children: [
                               BangumiCardV(bangumiItem: bangumiList[index]),
                               Positioned(
-                                right: 4,
-                                top: 4,
+                                right: 6,
+                                top: 6,
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                      horizontal: 6, vertical: 0),
+                                    horizontal: 4,
+                                    vertical: 0,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: Theme.of(context)
                                         .colorScheme
-                                        .tertiaryContainer,
-                                    borderRadius: BorderRadius.circular(20),
+                                        .secondaryContainer,
+                                    borderRadius: BorderRadius.circular(4),
                                   ),
                                   child: Text(
                                     bangumiList[index]
                                         .ratingScore
                                         .toStringAsFixed(1),
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSecondaryContainer,
+                                    ),
                                   ),
                                 ),
                               )
@@ -239,8 +247,8 @@ class _TimelinePageState extends State<TimelinePage>
                   childCount: bangumiList.isNotEmpty ? bangumiList.length : 10,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }

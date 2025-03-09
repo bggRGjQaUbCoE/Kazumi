@@ -67,7 +67,12 @@ class _PluginEditorPageState extends State<PluginEditorPage> {
         title: Text('规则编辑器'),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(
+          left: 16,
+          top: 16,
+          right: 16,
+          bottom: MediaQuery.paddingOf(context).bottom + 85,
+        ),
         child: Center(
           child: SizedBox(
             width: (MediaQuery.of(context).size.width > 1000) ? 1000 : null,

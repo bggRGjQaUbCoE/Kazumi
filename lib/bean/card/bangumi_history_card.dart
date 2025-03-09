@@ -56,6 +56,7 @@ class _BangumiHistoryCardVState extends State<BangumiHistoryCardV> {
   Widget build(BuildContext context) {
     final InfoController infoController = Modular.get<InfoController>();
     return Card(
+      elevation: 0,
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () async {

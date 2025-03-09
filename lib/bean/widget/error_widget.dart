@@ -59,12 +59,16 @@ class GeneralErrorButton extends StatelessWidget {
       onPressed: onPressed,
       style: ButtonStyle(
         backgroundColor: WidgetStateProperty.resolveWith((_) {
-          return Theme.of(context).colorScheme.primary.withAlpha(20);
+          return Theme.of(context)
+              .colorScheme
+              .secondaryContainer
+              .withOpacity(0.5);
         }),
       ),
       child: Text(
         text,
-        style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        style: TextStyle(
+            color: Theme.of(context).colorScheme.onSecondaryContainer),
       ),
     );
   }

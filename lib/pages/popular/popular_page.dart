@@ -179,26 +179,22 @@ class _PopularPageState extends State<PopularPage>
                 height: showTagFilter ? 50 : 0,
                 child: tagFilter(),
               ),
+              Observer(
+                builder: (_) => popularController.isLoadingMore
+                    ? const LinearProgressIndicator()
+                    : const SizedBox(height: 4),
+              ),
               Expanded(
                 child: CustomScrollView(
                   controller: scrollController,
                   slivers: [
-                    SliverToBoxAdapter(
-                      child: Observer(
-                        builder: (_) => Padding(
-                          padding: const EdgeInsets.only(
-                              top: 0, bottom: 10, left: 0),
-                          child: popularController.isLoadingMore
-                              ? const LinearProgressIndicator()
-                              : const SizedBox(
-                                  height: 4.0,
-                                ),
-                        ),
-                      ),
-                    ),
                     SliverPadding(
                         padding: const EdgeInsets.fromLTRB(
-                            StyleString.cardSpace, 0, StyleString.cardSpace, 0),
+                          StyleString.cardSpace,
+                          4,
+                          StyleString.cardSpace,
+                          80,
+                        ),
                         sliver: Observer(builder: (context) {
                           if (popularController.isTimeOut) {
                             return SliverToBoxAdapter(
@@ -229,7 +225,8 @@ class _PopularPageState extends State<PopularPage>
                             );
                           }
                           return contentGrid(
-                              (popularController.currentTag == '' && popularController.searchKeyword == '')
+                              (popularController.currentTag == '' &&
+                                      popularController.searchKeyword == '')
                                   ? popularController.trendList
                                   : popularController.bangumiList,
                               orientation);
@@ -308,7 +305,7 @@ class _PopularPageState extends State<PopularPage>
               itemBuilder: (context, index) {
                 final filter = tags[index];
                 return Padding(
-                  padding: const EdgeInsets.only(top: 8, bottom: 8, left: 8),
+                  padding: const EdgeInsets.only(top: 8, bottom: 4, left: 8),
                   child: Observer(
                     builder: (_) => filter == popularController.currentTag
                         ? FilledButton(

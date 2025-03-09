@@ -25,6 +25,7 @@ void main() async {
       systemNavigationBarColor: Colors.transparent,
       systemNavigationBarDividerColor: Colors.transparent,
       statusBarColor: Colors.transparent,
+      systemNavigationBarContrastEnforced: false,
     ));
   }
   try {

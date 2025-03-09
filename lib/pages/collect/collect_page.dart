@@ -148,18 +148,18 @@ class _CollectPageState extends State<CollectPage>
       collectedBangumiRenderItemList[element.type - 1].add(element);
     }
     for (List<CollectedBangumi> list in collectedBangumiRenderItemList) {
-      list.sort((a, b) => b.time.millisecondsSinceEpoch
-          .compareTo(a.time.millisecondsSinceEpoch));
+      list.sort((a, b) => b.time.compareTo(a.time));
     }
     int crossCount = orientation != Orientation.portrait ? 6 : 3;
     for (List<CollectedBangumi> collectedBangumiRenderItem
         in collectedBangumiRenderItemList) {
       gridViewList.add(
-        Padding(
-          padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
-          child: CustomScrollView(
-            slivers: [
-              SliverGrid(
+        CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding:
+                  const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 80),
+              sliver: SliverGrid(
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   mainAxisSpacing: StyleString.cardSpace - 2,
                   crossAxisSpacing: StyleString.cardSpace,
@@ -211,8 +211,8 @@ class _CollectPageState extends State<CollectPage>
                       : 10,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }
