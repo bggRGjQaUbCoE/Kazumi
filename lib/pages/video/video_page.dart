@@ -57,7 +57,7 @@ class _VideoPageState extends State<VideoPage>
   late final StreamSubscription<bool> _initSubscription;
 
   // webview logs events listener
-  late final StreamSubscription<String> _logSubscription;
+  // late final StreamSubscription<String> _logSubscription;
 
   // webview video loaded events listener
   late final StreamSubscription<bool> _videoLoadedSubscription;
@@ -123,20 +123,20 @@ class _VideoPageState extends State<VideoPage>
       final (mediaUrl, offset) = event;
       playerController.init(mediaUrl, offset: offset);
     });
-    _logSubscription = webviewItemController.onLog.listen((event) {
-      debugPrint('Kazumi Webview log: $event');
-      if (event == 'clear') {
-        clearLogs();
-        return;
-      }
-      if (event == 'showDebug') {
-        showDebugConsole();
-        return;
-      }
-      setState(() {
-        logLines.add(event);
-      });
-    });
+    // _logSubscription = webviewItemController.onLog.listen((event) {
+    //   debugPrint('Kazumi Webview log: $event');
+    //   if (event == 'clear') {
+    //     clearLogs();
+    //     return;
+    //   }
+    //   if (event == 'showDebug') {
+    //     showDebugConsole();
+    //     return;
+    //   }
+    //   setState(() {
+    //     logLines.add(event);
+    //   });
+    // });
   }
 
   @override
@@ -147,7 +147,7 @@ class _VideoPageState extends State<VideoPage>
     _initSubscription.cancel();
     _videoLoadedSubscription.cancel();
     _videoURLSubscription.cancel();
-    _logSubscription.cancel();
+    // _logSubscription.cancel();
     playerController.dispose();
     infoController.episodeCommentsList.clear();
     Utils.unlockScreenRotation();
