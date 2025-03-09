@@ -6,7 +6,6 @@ import 'package:flutter_modular/flutter_modular.dart';
 import 'package:hive/hive.dart';
 import 'package:kazumi/bean/appbar/sys_app_bar.dart';
 import 'package:kazumi/bean/dialog/dialog_helper.dart';
-import 'package:kazumi/pages/my/my_controller.dart';
 import 'package:kazumi/request/api.dart';
 import 'package:kazumi/utils/mortis.dart';
 import 'package:kazumi/utils/storage.dart';
@@ -30,14 +29,11 @@ class _AboutPageState extends State<AboutPage> {
   Box setting = GStorage.setting;
   late int exitBehavior =
       setting.get(SettingBoxKey.exitBehavior, defaultValue: 2);
-  late bool autoUpdate;
   double _cacheSizeMB = -1;
-  final MyController myController = Modular.get<MyController>();
 
   @override
   void initState() {
     super.initState();
-    autoUpdate = setting.get(SettingBoxKey.autoUpdate, defaultValue: true);
     _getCacheSize();
   }
 
@@ -241,27 +237,6 @@ class _AboutPageState extends State<AboutPage> {
                       value: _cacheSizeMB == -1
                           ? const Text('统计中...')
                           : Text('${_cacheSizeMB.toStringAsFixed(2)}MB'),
-                    ),
-                  ],
-                ),
-                SettingsSection(
-                  title: const Text('应用更新'),
-                  tiles: [
-                    SettingsTile.switchTile(
-                      onToggle: (value) async {
-                        autoUpdate = value ?? !autoUpdate;
-                        await setting.put(SettingBoxKey.autoUpdate, autoUpdate);
-                        setState(() {});
-                      },
-                      title: const Text('自动更新'),
-                      initialValue: autoUpdate,
-                    ),
-                    SettingsTile.navigation(
-                      onPressed: (_) {
-                        myController.checkUpdata();
-                      },
-                      title: const Text('检查更新'),
-                      value: const Text('当前版本 ${Api.version}'),
                     ),
                   ],
                 ),

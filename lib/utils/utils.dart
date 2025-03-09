@@ -5,12 +5,10 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:device_info_plus/device_info_plus.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
-import 'package:kazumi/request/api.dart';
 import 'package:kazumi/utils/constants.dart';
 import 'package:kazumi/utils/logger.dart';
 import 'package:kazumi/utils/mortis.dart';
@@ -262,19 +260,6 @@ class Utils {
     }
   }
 
-  static Future<String> latest() async {
-    try {
-      var resp = await Dio().get<Map<String, dynamic>>(Api.latestApp);
-      if (resp.data?.containsKey("tag_name") ?? false) {
-        return resp.data!["tag_name"];
-      } else {
-        throw resp.data?["message"];
-      }
-    } catch (e) {
-      return Api.version;
-    }
-  }
-
   static oledDarkTheme(ThemeData defaultDarkTheme) {
     return defaultDarkTheme.copyWith(
       scaffoldBackgroundColor: Colors.black,
@@ -487,7 +472,8 @@ class Utils {
   static Future<void> exitDesktopPIPWindow() async {
     bool isLowResolution = await Utils.isLowResolution();
     await windowManager.setAlwaysOnTop(false);
-    await windowManager.setSize(isLowResolution ? const Size(800, 600) : const Size(1280, 860));
+    await windowManager.setSize(
+        isLowResolution ? const Size(800, 600) : const Size(1280, 860));
     await windowManager.center();
   }
 
